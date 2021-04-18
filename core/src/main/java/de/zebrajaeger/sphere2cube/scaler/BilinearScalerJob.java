@@ -48,17 +48,17 @@ public class BilinearScalerJob implements Runnable {
                     + p2.r * (1 - yDiff) * (xDiff)
                     + p3.r * (yDiff) * (1 - xDiff)
                     + p4.r * (yDiff) * (xDiff);
-//            float g = p1.g * (1 - xDiff) * (1 - yDiff)
-//                    + p2.g * (1 - yDiff) * (xDiff)
-//                    + p3.g * (yDiff) * (1 - xDiff)
-//                    + p4.g * (yDiff) * (xDiff);
-//            float b = p1.b * (1 - xDiff) * (1 - yDiff)
-//                    + p2.b * (1 - yDiff) * (xDiff)
-//                    + p3.b * (yDiff) * (1 - xDiff)
-//                    + p4.b * (yDiff) * (xDiff);
+            float g = p1.g * (1 - xDiff) * (1 - yDiff)
+                    + p2.g * (1 - yDiff) * (xDiff)
+                    + p3.g * (yDiff) * (1 - xDiff)
+                    + p4.g * (yDiff) * (xDiff);
+            float b = p1.b * (1 - xDiff) * (1 - yDiff)
+                    + p2.b * (1 - yDiff) * (xDiff)
+                    + p3.b * (yDiff) * (1 - xDiff)
+                    + p4.b * (yDiff) * (xDiff);
             pt.r = Math.round(r);
-//            pt.g = Math.round(g);
-//            pt.b = Math.round(b);
+            pt.g = Math.round(g);
+            pt.b = Math.round(b);
 
             target.setPixel(ix, iy, pt);
         }

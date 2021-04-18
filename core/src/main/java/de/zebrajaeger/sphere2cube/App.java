@@ -24,22 +24,30 @@ public class App {
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) throws IOException, InterruptedException, ParseException {
+        Config config;
 
         if (args.length == 0) {
             File src = new File("sphere2cube.json");
             if (!src.exists()) {
                 Config.help();
                 System.exit(-1);
+                return;
+            } else {
+                config = Config.of(src);
             }
         } else if (args.length == 1) {
             File src = new File(args[0]);
             if (!src.exists()) {
                 Config.help();
                 System.exit(-1);
+                return;
+            } else {
+                config = Config.of(src);
             }
+        } else {
+            config = Config.of(args);
         }
 
-        Config config = Config.of(args);
         if (config.getSaveConfig().isSaveConfig()) {
             File t = new File(config.getSaveConfig().getSaveConfigTarget());
             FileUtils.forceMkdirParent(t);
