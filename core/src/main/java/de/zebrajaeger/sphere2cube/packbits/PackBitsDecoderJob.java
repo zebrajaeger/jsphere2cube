@@ -22,10 +22,9 @@ public class PackBitsDecoderJob implements Runnable {
 
     @Override
     public void run() {
-        ByteBuffer bb = ByteBuffer.allocate(psd.getWidth());
         PackBitsDecoder decoder = new PackBitsDecoder();
         try {
-            DecodeResult result = decoder.decode(source, bb);
+            DecodeResult result = decoder.decode(source, target);
             // TODO check size
         } catch (IOException e) {
             System.out.println("FAIL " + index);
