@@ -51,10 +51,14 @@ public class Config {
         CommandLine cmd = parser.parse(options, args);
 
         // debug
-        config.setDebug(cmd.hasOption("d"));
+        if (cmd.hasOption("d")) {
+            config.setDebug(cmd.hasOption("d"));
+        }
 
         // common
-        config.getSaveConfig().setSaveConfig(cmd.hasOption("sc"));
+        if (cmd.hasOption("sc")) {
+            config.getSaveConfig().setSaveConfig(cmd.hasOption("sc"));
+        }
         if (cmd.hasOption("sct")) {
             config.getSaveConfig().setSaveConfigTarget(cmd.getOptionValue("sct"));
         }
@@ -73,7 +77,9 @@ public class Config {
         }
 
         // Preview - CubeMap
-        config.getPreviewsConfig().getCubeMapPreview().setEnabled(cmd.hasOption("pc"));
+        if (cmd.hasOption("pc")) {
+            config.getPreviewsConfig().getCubeMapPreview().setEnabled(cmd.hasOption("pc"));
+        }
         if (cmd.hasOption("pce")) {
             config.getPreviewsConfig().getCubeMapPreview().setEdge(Integer.parseInt(cmd.getOptionValue("pce")));
         }
@@ -82,7 +88,9 @@ public class Config {
         }
 
         // Preview - Equirectangular
-        config.getPreviewsConfig().getEquirectangularPreview().setEnabled(cmd.hasOption("pe"));
+        if (cmd.hasOption("pe")) {
+            config.getPreviewsConfig().getEquirectangularPreview().setEnabled(cmd.hasOption("pe"));
+        }
         if (cmd.hasOption("pee")) {
             config.getPreviewsConfig().getEquirectangularPreview().setEdge(Integer.parseInt(cmd.getOptionValue("pee")));
         }
@@ -91,7 +99,9 @@ public class Config {
         }
 
         // Preview - Scaled
-        config.getPreviewsConfig().getScaledPreview().setEnabled(cmd.hasOption("ps"));
+        if (cmd.hasOption("ps")) {
+            config.getPreviewsConfig().getScaledPreview().setEnabled(cmd.hasOption("ps"));
+        }
         if (cmd.hasOption("pse")) {
             config.getPreviewsConfig().getScaledPreview().setEdge(Integer.parseInt(cmd.getOptionValue("pse")));
         }
@@ -100,12 +110,16 @@ public class Config {
         }
 
         // Cube faces
-        config.getCubeMapConfig().getFaces().setEnabled(cmd.hasOption("cf"));
+        if (cmd.hasOption("cf")) {
+            config.getCubeMapConfig().getFaces().setEnabled(cmd.hasOption("cf"));
+        }
         if (cmd.hasOption("cft")) {
             config.getCubeMapConfig().getFaces().setTarget(cmd.getOptionValue("cft"));
         }
 
-        config.getCubeMapConfig().getTiles().setEnabled(cmd.hasOption("ct"));
+        if (cmd.hasOption("ct")) {
+            config.getCubeMapConfig().getTiles().setEnabled(cmd.hasOption("ct"));
+        }
         if (cmd.hasOption("ctt")) {
             config.getCubeMapConfig().getTiles().setTarget(cmd.getOptionValue("ctt"));
         }
@@ -114,7 +128,9 @@ public class Config {
         }
 
         // viewer
-        config.getViewerConfig().getPannellum().setEnabled(cmd.hasOption("vp"));
+        if (cmd.hasOption("vp")) {
+            config.getViewerConfig().getPannellum().setEnabled(cmd.hasOption("vp"));
+        }
         if (cmd.hasOption("vpt")) {
             config.getViewerConfig().getPannellum().setTarget(cmd.getOptionValue("vpt"));
         }
