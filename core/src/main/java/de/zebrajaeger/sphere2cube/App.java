@@ -25,15 +25,26 @@ public class App {
 
     public static void main(String[] args) throws IOException, InterruptedException, ParseException {
 
-//        Config config = Config.of(new File("sphere2cube.json"));
-//
-////        Config config = Config.of(args);
-//        System.out.println(config.toString());
-//        System.out.println(config.toJson());
-//
-//        if(true){
-//            throw new IOException();
-//        }
+        if (args.length == 0) {
+            File src = new File("sphere2cube.json");
+            if (!src.exists()) {
+                Config.help();
+                System.exit(-1);
+            }
+        } else if (args.length == 1) {
+            File src = new File(args[0]);
+            if (!src.exists()) {
+                Config.help();
+                System.exit(-1);
+            }
+        }
+
+        Config config = Config.of(args);
+        if (config.getSaveConfig().isSaveConfig()) {
+            File t = new File(config.getSaveConfig().getSaveConfigTarget());
+            FileUtils.forceMkdirParent(t);
+            FileUtils.write(t, config.toJson(), StandardCharsets.UTF_8);
+        }
 
         // +===============================================================
         // | Options
