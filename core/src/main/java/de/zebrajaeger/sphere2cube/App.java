@@ -9,6 +9,8 @@ import de.zebrajaeger.sphere2cube.pano.PanoLevel;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
+import de.zebrajaeger.sphere2cube.tiles.TileSaveExecutor;
+import de.zebrajaeger.sphere2cube.tiles.TileSaveExecutorJob;
 import de.zebrajaeger.sphere2cube.viewer.PanellumConfig;
 import de.zebrajaeger.sphere2cube.viewer.Pannellum;
 import org.apache.commons.cli.ParseException;
@@ -187,19 +189,22 @@ public class App {
 
                         // render tiles for face and level
                         int tileCount = level.getTileCount();
+
+                        TileSaveExecutor tsc = new TileSaveExecutor();
                         for (int yIndex = 0; yIndex < tileCount; ++yIndex) {
                             for (int xIndex = 0; xIndex < tileCount; ++xIndex) {
-                                scaledCubeFace.copyTo(tile, xIndex * tileEdge, yIndex * tileEdge);
                                 String name = tileNameGenerator.generate(panoInfo, levelIndex, face, xIndex, yIndex);
-                                File tileFile = new File(outputFolder, name);
-                                LOG.info("Save tile: '{}'-'{}'-{},{} -> {}", levelIndex, face, xIndex, yIndex, tileFile.getAbsolutePath());
-                                FileUtils.forceMkdirParent(tileFile);
-                                if (debug) {
-                                    ImgUtils.drawDottedBorder(tile, Pixel.of(0xffffff));
-                                }
-                                ImgUtils.save(tile, tileFile, null);
+
+                                tsc.addJob(new TileSaveExecutorJob(
+                                        scaledCubeFace,
+                                        new File(outputFolder, name),
+                                        tileEdge,
+                                        xIndex * tileEdge,
+                                        yIndex * tileEdge,
+                                        debug));
                             }
                         }
+                        tsc.shutdown();
 
                         // downscale cube face image
                         if (levelIndex > 0) {

@@ -21,7 +21,7 @@ public class Config {
     private InputConfig inputConfig = new InputConfig();
 
     @JsonProperty("target")
-    private File outputFolder = new File(".");
+    private File outputFolder = new File("./build");
 
     @JsonProperty("preview")
     PreviewsConfig previewsConfig = new PreviewsConfig();
@@ -66,8 +66,6 @@ public class Config {
         // target
         if (cmd.hasOption("t")) {
             config.setOutputFolder(new File(cmd.getOptionValue("t")).getCanonicalFile());
-        } else {
-            config.setOutputFolder(new File(".").getCanonicalFile());
         }
 
         // source

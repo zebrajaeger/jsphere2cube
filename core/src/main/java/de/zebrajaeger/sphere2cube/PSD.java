@@ -122,11 +122,11 @@ public class PSD implements ReadableImage {
         channels = dis.readU16();
         System.out.println("Channels: " + channels);
         long h = dis.readU32();
-        System.out.println("Height: " + height);
         if (h > Integer.MAX_VALUE) {
             throw new DataInputException("height too large");
         }
         height = (int) h;
+        System.out.println("Height: " + height);
 
         long w = dis.readU32();
         if (w > Integer.MAX_VALUE) {

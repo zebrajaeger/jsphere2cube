@@ -9,7 +9,7 @@ public class ViewerConfigPannellum {
     @JsonIgnore
     private File outputFolder;
 
-    private boolean enabled;
+    private boolean enabled = true;
     private String pageTitle = "cube2sphere - pannellum";
     private String target = "index.p.html";
 
