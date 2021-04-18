@@ -13,6 +13,7 @@ import de.zebrajaeger.sphere2cube.viewer.PanellumConfig;
 import de.zebrajaeger.sphere2cube.viewer.Pannellum;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +104,13 @@ public class App {
 
         // load source
         LOG.info("Load source image: '{}'", inputImageFile.getAbsolutePath());
-        Img sourceImage = new Img(inputImageFile);
+        String ext = FilenameUtils.getExtension(inputImageFile.getName()).toLowerCase();
+        ReadableImage sourceImage;
+        if ("psd".equals(ext) || "psb".equals(ext)) {
+            sourceImage = PSD.of(inputImageFile);
+        } else {
+            sourceImage = new Img(inputImageFile);
+        }
         EquirectangularImage source = EquirectangularImage.of(sourceImage, inputImageHorizontalAngel);
 
         PanoInfo panoInfo = PanoUtils.calcPanoInfo(source, tileEdge);
