@@ -24,12 +24,15 @@ public class PanoInfo {
         return maxLevelIndex;
     }
 
-    public int getSourceFaceEdge() {
+    public PanoLevel getLevel(int levelIndex) {
         return levels.stream()
-                .filter(l -> l.getLevelIndex() == maxLevelIndex)
+                .filter(l -> l.getLevelIndex() == levelIndex)
                 .findFirst()
-                .orElseThrow()
-                .getFaceEdge();
+                .orElseThrow();
+    }
+
+    public int getSourceFaceEdge() {
+        return getLevel(maxLevelIndex).getFaceEdge();
     }
 
     public int getTileEdge() {

@@ -14,6 +14,10 @@ public class Img implements ReadableImage, WriteableImage {
     private byte[][] g;
     private byte[][] b;
 
+    public static Img rectangular(int edge) {
+        return new Img(edge, edge);
+    }
+
     public Img(int width, int height) {
         this.width = width;
         this.height = height;
@@ -126,6 +130,17 @@ public class Img implements ReadableImage, WriteableImage {
         return img;
     }
 
+    public void copyTo(WriteableImage target, int x, int y) {
+        int w = target.getWidth();
+        int h = target.getHeight();
+        Pixel pixel = new Pixel();
+        for (int iy = 0; iy < h; ++iy) {
+            for (int ix = 0; ix < w; ++ix) {
+                getPixel(x + ix, y + iy, pixel);
+                target.setPixel(ix, iy, pixel);
+            }
+        }
+    }
 
     public Img createTile(int x1, int y1, int w, int h) {
         Img result = new Img(w, h);
