@@ -1,0 +1,43 @@
+{
+  "debug" : false,
+  "source" : {
+    "path" : "/home/l/Dokumente/sphere2cube/7Lo6s.jp",
+    "angel" : 360.0
+  },
+  "target" : "./temp",
+  "preview" : {
+    "cubemap" : {
+      "enabled" : false,
+      "edge" : 200,
+      "target" : "preview_cube.jpg"
+    },
+    "equirectangular" : {
+      "enabled" : false,
+      "edge" : 200,
+      "target" : "preview_equirectangular.jpg"
+    },
+    "scaled" : {
+      "enabled" : false,
+      "edge" : 200,
+      "target" : "preview_scaled.jpg"
+    }
+  },
+  "cubemap" : {
+    "tiles" : {
+      "enabled" : false,
+      "tileEdge" : 512,
+      "target" : "{{levelCount}}/{{faceNameShortLowerCase}}{{xIndex}}_{{yIndex}}.png"
+    },
+    "faces" : {
+      "enabled" : false,
+      "target" : "{{faceNameLowerCase}}_{{levelCount}}.png"
+    }
+  },
+  "viewer" : {
+    "pannellum" : {
+      "enabled" : false,
+      "pageTitle" : "cube2sphere - pannellum",
+      "target" : "index.p.html"
+    }
+  }
+}

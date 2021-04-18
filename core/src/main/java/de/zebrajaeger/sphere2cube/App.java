@@ -1,5 +1,6 @@
 package de.zebrajaeger.sphere2cube;
 
+import de.zebrajaeger.sphere2cube.config.Config;
 import de.zebrajaeger.sphere2cube.facerenderer.FaceRenderExecutor;
 import de.zebrajaeger.sphere2cube.names.CubeFaceNameGenerator;
 import de.zebrajaeger.sphere2cube.names.TileNameGenerator;
@@ -10,6 +11,7 @@ import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.viewer.PanellumConfig;
 import de.zebrajaeger.sphere2cube.viewer.Pannellum;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,17 @@ import java.nio.charset.StandardCharsets;
 public class App {
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, ParseException {
+
+//        Config config = Config.of(new File("sphere2cube.json"));
+//
+////        Config config = Config.of(args);
+//        System.out.println(config.toString());
+//        System.out.println(config.toJson());
+//
+//        if(true){
+//            throw new IOException();
+//        }
 
         // +===============================================================
         // | Options
@@ -176,9 +188,9 @@ public class App {
 
         if (viewerPannellumEnabled) {
             LOG.info("Render pannellum html: '{}'", viewerPannellumFile.getAbsolutePath());
-            PanellumConfig config = new PanellumConfig(panoInfo.getMaxLevelIndex() + 1, panoInfo.getSourceFaceEdge(), tileEdge);
+            PanellumConfig pannellumConfig = new PanellumConfig(panoInfo.getMaxLevelIndex() + 1, panoInfo.getSourceFaceEdge(), tileEdge);
             Pannellum pannellum = new Pannellum();
-            String html = pannellum.render(config);
+            String html = pannellum.render(pannellumConfig);
             FileUtils.write(viewerPannellumFile, html, StandardCharsets.UTF_8);
         }
     }
