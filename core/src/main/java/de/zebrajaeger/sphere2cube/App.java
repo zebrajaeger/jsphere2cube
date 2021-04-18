@@ -7,9 +7,9 @@ import de.zebrajaeger.sphere2cube.pano.PanoInfo;
 import de.zebrajaeger.sphere2cube.pano.PanoLevel;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
+import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.viewer.PanellumConfig;
 import de.zebrajaeger.sphere2cube.viewer.Pannellum;
-import net.jafama.FastMath;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,7 +135,7 @@ public class App {
 
                 if (cubeMapTilesEnabled) {
                     Img scaledCubeFace = cubeFace;
-                    BilinearScaler scaler = new BilinearScaler();
+                    DownHalfScaler downHalfScaler = new DownHalfScaler();
                     Img tile = Img.rectangular(tileEdge);
                     for (int levelIndex = panoInfo.getMaxLevelIndex(); levelIndex >= 0; --levelIndex) {
 
@@ -165,16 +165,9 @@ public class App {
 
                         // downscale cube face image
                         if (levelIndex > 0) {
-                            if (highQualityScale) {
-                                double factor = FastMath.sqrt(2d);
-                                int newEdge1 = (int) ((double) level.getFaceEdge() / factor);
-                                LOG.info("Downscale face to 1/{} = {},{}", factor, newEdge1, newEdge1);
-                                scaledCubeFace = scaler.scale(scaledCubeFace, newEdge1, newEdge1);
-                            }
-
                             int newEdge2 = level.getFaceEdge() / 2;
                             LOG.info("Downscale face to 1/2 = {},{}", newEdge2, newEdge2);
-                            scaledCubeFace = scaler.scale(scaledCubeFace, newEdge2, newEdge2);
+                            scaledCubeFace = downHalfScaler.scale(scaledCubeFace);
                         }
                     }
                 }
