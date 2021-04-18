@@ -26,6 +26,10 @@ public class PanoLevel {
         return tileEdge;
     }
 
+    public int getFaceEdge() {
+        return tileCount * tileEdge;
+    }
+
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);

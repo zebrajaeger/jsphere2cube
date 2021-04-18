@@ -1,6 +1,7 @@
 package de.zebrajaeger.sphere2cube;
 
 import de.zebrajaeger.sphere2cube.facerenderer.FaceRenderExecutor;
+import de.zebrajaeger.sphere2cube.names.CubeFaceNameGenerator;
 import de.zebrajaeger.sphere2cube.pano.PanoInfo;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
@@ -69,7 +70,7 @@ class PixelTest {
     void bilinearScaler() throws IOException, InterruptedException {
         Img img1 = new Img(new File("/home/l/Dokumente/sphere2cube/7Lo6s.jpg"));
         Scaler s = new BilinearScaler();
-        Img scaled = s.scale(img1, 2000,250);
+        Img scaled = s.scale(img1, 2000, 250);
         ImgUtils.saveAsJpg(scaled, new File("test_scaled.jpg"), 1f);
     }
 
@@ -92,5 +93,17 @@ class PixelTest {
             FaceRenderExecutor.renderFace(source, cubeMapImage.getFaceImg(face), face);
         }
         ImgUtils.saveAsJpg(cubeMapImage, new File("test_cubemap.jpg"), 1f);
+    }
+
+    @Test
+    void fileTest() throws IOException, InterruptedException {
+        File f = new File("*abc");
+        System.out.println(f.getAbsolutePath());
+    }
+
+    @Test
+    void cubeFaceNameGenerator() throws IOException, InterruptedException {
+        CubeFaceNameGenerator g = new CubeFaceNameGenerator("xxx{{faceNameUpperCase}}xxx");
+        System.out.println(g.generate(Face.BOTTOM));
     }
 }

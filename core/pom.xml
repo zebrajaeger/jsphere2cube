@@ -23,12 +23,12 @@
     <artifactId>sphere2cube-java-core</artifactId>
 
     <dependencies>
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.jtwig/jtwig-core &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.jtwig</groupId>-->
-<!--            <artifactId>jtwig-core</artifactId>-->
-<!--            <version>5.87.0.RELEASE</version>-->
-<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.samskivert/jmustache -->
+        <dependency>
+            <groupId>com.samskivert</groupId>
+            <artifactId>jmustache</artifactId>
+            <version>1.15</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/net.jafama/jafama -->
         <dependency>

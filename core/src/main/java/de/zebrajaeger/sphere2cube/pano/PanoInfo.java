@@ -7,22 +7,29 @@ import java.util.List;
 
 public class PanoInfo {
     private List<PanoLevel> levels;
-    private final int maxLevel;
+    private final int maxLevelIndex;
     private final int tileEdge;
 
-    public PanoInfo(List<PanoLevel> levels, int maxLevel, int tileEdge) {
+    public PanoInfo(List<PanoLevel> levels, int maxLevelIndex, int tileEdge) {
         this.levels = levels;
-        this.maxLevel = maxLevel;
+        this.maxLevelIndex = maxLevelIndex;
         this.tileEdge = tileEdge;
     }
-
 
     public List<PanoLevel> getLevels() {
         return levels;
     }
 
-    public int getMaxLevel() {
-        return maxLevel;
+    public int getMaxLevelIndex() {
+        return maxLevelIndex;
+    }
+
+    public int getSourceFaceEdge() {
+        return levels.stream()
+                .filter(l -> l.getLevelIndex() == maxLevelIndex)
+                .findFirst()
+                .orElseThrow()
+                .getFaceEdge();
     }
 
     public int getTileEdge() {

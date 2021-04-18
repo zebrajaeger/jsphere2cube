@@ -19,12 +19,12 @@ public class PanoUtils {
 
         int levelEdge = tileEdge;
         while (sourceEdge > levelEdge) {
-            levels.add(new PanoLevel(levelIndex, tileCount, levelEdge));
+            levels.add(new PanoLevel(levelIndex, tileCount, tileEdge));
             levelIndex++;
             tileCount *= 2;
             levelEdge *= 2;
         }
-        levels.add(new PanoLevel(levelIndex, tileCount, levelEdge));
+        levels.add(new PanoLevel(levelIndex, tileCount, tileEdge));
 
         return new PanoInfo(levels, levelIndex, tileEdge);
     }
