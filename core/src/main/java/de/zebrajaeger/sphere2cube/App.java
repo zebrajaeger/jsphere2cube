@@ -50,40 +50,40 @@ public class App {
         // | Options
         // +===============================================================
 
-        boolean debug = true;
+        boolean debug = config.isDebug();
 
         // Source
-        File inputImageFile = new File("/home/l/Dokumente/sphere2cube/7Lo6s.jpg");
-        double inputImageHorizontalAngel = 360d;
+        File inputImageFile = config.getInputConfig().getInputImageFile();
+        double inputImageHorizontalAngel = config.getInputConfig().getInputImageHorizontalAngel();
 
-        File outputFolder = new File("./temp");
+        File outputFolder = config.getOutputFolder();
 
         // Preview - CubeMap
-        boolean previewCubeEnabled = false;
-        int previewCubeEdge = 200;
+        boolean previewCubeEnabled = config.getPreviewsConfig().getCubeMapPreview().isEnabled();
+        int previewCubeEdge = config.getPreviewsConfig().getCubeMapPreview().getEdge();
         File previewCubeTarget = new File(outputFolder, "preview_cube.jpg");
 
         // Preview Equirectangular
-        boolean previewEquirectangularEnabled = false;
-        int previewEquirectangularEdge = 200;
+        boolean previewEquirectangularEnabled = config.getPreviewsConfig().getCubeMapPreview().isEnabled();
+        int previewEquirectangularEdge = config.getPreviewsConfig().getCubeMapPreview().getEdge();
         File previewEquirectangularTarget = new File(outputFolder, "preview_equirectangular.jpg");
 
         // Preview Scaled
-        boolean previewScaledOriginalEnabled = false;
-        int previewScaledOriginalEdge = 200;
+        boolean previewScaledOriginalEnabled = config.getPreviewsConfig().getScaledPreview().isEnabled();
+        int previewScaledOriginalEdge = config.getPreviewsConfig().getScaledPreview().getEdge();
         File previewScaledOriginalTarget = new File(outputFolder, "preview_scaled.jpg");
 
         // Cube faces
-        boolean cubeMapFacesEnabled = true;
-        boolean cubeMapTilesEnabled = true;
-        String cubeFaceTarget = "{{faceNameLowerCase}}_{{levelCount}}.png";
-        String cubeFaceTilesTarget = "{{levelCount}}/{{faceNameShortLowerCase}}{{xIndex}}_{{yIndex}}.png";
-        int tileEdge = 64;
-        boolean highQualityScale = true;
+        boolean cubeMapFacesEnabled = config.getCubeMapConfig().getFaces().isEnabled();
+        String cubeFaceTarget = config.getCubeMapConfig().getFaces().getTarget();
+
+        boolean cubeMapTilesEnabled = config.getCubeMapConfig().getTiles().isEnabled();
+        String cubeFaceTilesTarget = config.getCubeMapConfig().getTiles().getTarget();
+        int tileEdge = config.getCubeMapConfig().getTiles().getTileEdge();
 
         // viewer
-        boolean viewerPannellumEnabled = true;
-        File viewerPannellumFile = new File(outputFolder, "index.p.html");
+        boolean viewerPannellumEnabled = config.getViewerConfig().getPannellum().isEnabled();
+        File viewerPannellumFile = new File(outputFolder, config.getViewerConfig().getPannellum().getTarget());
 
         // +===============================================================
         // | Init and load source
