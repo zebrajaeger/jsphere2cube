@@ -51,13 +51,6 @@ class PixelTest {
     }
 
     @Test
-    void tile() throws IOException {
-        Img img1 = new Img(new File("Hagenbrunnen_Frittlingen.png"));
-        Img img2 = img1.createTile(100, 100, 200, 100);
-        ImgUtils.saveAsJpg(img2, new File("test5.jpg"), 0.3f);
-    }
-
-    @Test
     void cube() throws IOException, InterruptedException {
         Img img1 = new Img(new File("/home/l/Dokumente/sphere2cube/7Lo6s.jpg"));
         EquirectangularImage source = EquirectangularImage.of(img1, 360d);
@@ -101,9 +94,4 @@ class PixelTest {
         System.out.println(f.getAbsolutePath());
     }
 
-    @Test
-    void cubeFaceNameGenerator() throws IOException, InterruptedException {
-        CubeFaceNameGenerator g = new CubeFaceNameGenerator("xxx{{faceNameUpperCase}}xxx");
-        System.out.println(g.generate(Face.BOTTOM));
-    }
 }

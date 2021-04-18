@@ -7,6 +7,8 @@ import de.zebrajaeger.sphere2cube.pano.PanoInfo;
 import de.zebrajaeger.sphere2cube.pano.PanoLevel;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
+import de.zebrajaeger.sphere2cube.viewer.PanellumConfig;
+import de.zebrajaeger.sphere2cube.viewer.Pannellum;
 import net.jafama.FastMath;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class App {
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
@@ -23,6 +26,8 @@ public class App {
         // +===============================================================
         // | Options
         // +===============================================================
+
+        boolean debug = true;
 
         // Source
         File inputImageFile = new File("/home/l/Dokumente/sphere2cube/7Lo6s.jpg");
@@ -46,15 +51,16 @@ public class App {
         File previewScaledOriginalTarget = new File(outputFolder, "preview_scaled.jpg");
 
         // Cube faces
-        boolean cubeMapFacesEnabled = false;
+        boolean cubeMapFacesEnabled = true;
         boolean cubeMapTilesEnabled = true;
-        // levelCount, levelIndex, inverseLevelCount, inverseLevelIndex
-        // faceNameUpperCase, faceNameLowerCase, faceShortNameUpperCase, faceShortNameLowerCase,
-        // xIndex, xCount, yIndex, yCount
-        String cubeFaceTarget = "{{faceNameLowerCase}}.jpg";
-        String cubeFaceTilesTarget = "{{levelCount}}/{{faceNameShortLowerCase}}{{xIndex}}_{{yIndex}}.jpg";
+        String cubeFaceTarget = "{{faceNameLowerCase}}_{{levelCount}}.png";
+        String cubeFaceTilesTarget = "{{levelCount}}/{{faceNameShortLowerCase}}{{xIndex}}_{{yIndex}}.png";
         int tileEdge = 64;
         boolean highQualityScale = true;
+
+        // viewer
+        boolean viewerPannellumEnabled = true;
+        File viewerPannellumFile = new File(outputFolder, "index.p.html");
 
         // +===============================================================
         // | Init and load source
@@ -69,6 +75,7 @@ public class App {
         Img sourceImage = new Img(inputImageFile);
         EquirectangularImage source = EquirectangularImage.of(sourceImage, inputImageHorizontalAngel);
 
+        PanoInfo panoInfo = PanoUtils.calcPanoInfo(source, tileEdge);
 
         // +===============================================================
         // | Preview(s)
@@ -115,7 +122,6 @@ public class App {
             CubeFaceNameGenerator cubeFaceNameGenerator = new CubeFaceNameGenerator(cubeFaceTarget);
             TileNameGenerator tileNameGenerator = new TileNameGenerator(cubeFaceTilesTarget);
 
-            PanoInfo panoInfo = PanoUtils.calcPanoInfo(source, tileEdge);
             LOG.info(panoInfo.toString());
             int faceEdge = panoInfo.getSourceFaceEdge();
 
@@ -123,12 +129,8 @@ public class App {
             for (Face face : Face.values()) {
                 LOG.info("Render face: '{}' - {}x{}", face, faceEdge, faceEdge);
                 FaceRenderExecutor.renderFace(source, cubeFace, face);
-
-                if (cubeMapFacesEnabled) {
-                    File faceFile = new File(outputFolder, cubeFaceNameGenerator.generate(face));
-                    LOG.info("Save cube face: '{}' -> {}", face, faceFile.getAbsolutePath());
-                    FileUtils.forceMkdirParent(faceFile);
-                    ImgUtils.save(cubeFace, faceFile, null);
+                if (debug) {
+                    ImgUtils.drawBorder(cubeFace, face.getColor());
                 }
 
                 if (cubeMapTilesEnabled) {
@@ -136,6 +138,13 @@ public class App {
                     BilinearScaler scaler = new BilinearScaler();
                     Img tile = Img.rectangular(tileEdge);
                     for (int levelIndex = panoInfo.getMaxLevelIndex(); levelIndex >= 0; --levelIndex) {
+
+                        if (cubeMapFacesEnabled) {
+                            File faceFile = new File(outputFolder, cubeFaceNameGenerator.generate(panoInfo, levelIndex, face));
+                            LOG.info("Save cube face: '{}' -> {}", face, faceFile.getAbsolutePath());
+                            FileUtils.forceMkdirParent(faceFile);
+                            ImgUtils.save(scaledCubeFace, faceFile, null);
+                        }
                         PanoLevel level = panoInfo.getLevel(levelIndex);
 
                         // render tiles for face and level
@@ -147,6 +156,9 @@ public class App {
                                 File tileFile = new File(outputFolder, name);
                                 LOG.info("Save tile: '{}'-'{}'-{},{} -> {}", levelIndex, face, xIndex, yIndex, tileFile.getAbsolutePath());
                                 FileUtils.forceMkdirParent(tileFile);
+                                if (debug) {
+                                    ImgUtils.drawDottedBorder(tile, Pixel.of(0xffffff));
+                                }
                                 ImgUtils.save(tile, tileFile, null);
                             }
                         }
@@ -167,6 +179,14 @@ public class App {
                     }
                 }
             }
+        }
+
+        if (viewerPannellumEnabled) {
+            LOG.info("Render pannellum html: '{}'", viewerPannellumFile.getAbsolutePath());
+            PanellumConfig config = new PanellumConfig(panoInfo.getMaxLevelIndex() + 1, panoInfo.getSourceFaceEdge(), tileEdge);
+            Pannellum pannellum = new Pannellum();
+            String html = pannellum.render(config);
+            FileUtils.write(viewerPannellumFile, html, StandardCharsets.UTF_8);
         }
     }
 }

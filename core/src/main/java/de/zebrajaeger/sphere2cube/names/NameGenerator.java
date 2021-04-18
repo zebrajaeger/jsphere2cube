@@ -6,11 +6,9 @@ import com.samskivert.mustache.Template;
 import java.util.Map;
 
 public abstract class NameGenerator {
-    private String templateString;
-    private Template template;
+    private final Template template;
 
     public NameGenerator(String templateString) {
-        this.templateString = templateString;
         template = Mustache.compiler().compile(templateString);
     }
 

@@ -24,7 +24,9 @@ public class FaceRenderJob implements Runnable {
         try {
             Pixel pixel = new Pixel();
             for (int x = 0; x < targetEdge; ++x) {
-                faceRenderer.calculatePixel(false, false, x, lineToRender, face, targetEdge, pixel);
+                boolean invertY = face==Face.UP;
+                boolean invertX = false;
+                faceRenderer.calculatePixel(invertX, invertY, x, lineToRender, face, targetEdge, pixel);
                 target.setPixel(x, lineToRender, pixel);
             }
         } catch (Throwable t) {

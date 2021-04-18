@@ -141,16 +141,4 @@ public class Img implements ReadableImage, WriteableImage {
             }
         }
     }
-
-    public Img createTile(int x1, int y1, int w, int h) {
-        Img result = new Img(w, h);
-        Pixel pixel = new Pixel();
-        for (int y = 0; y < h; ++y) {
-            for (int x = 0; x < w; ++x) {
-                getPixel(x + x1, y + y1, pixel);
-                result.setPixel(x, y, pixel);
-            }
-        }
-        return result;
-    }
 }

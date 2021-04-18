@@ -5,6 +5,10 @@ public class Pixel {
     public int g;
     public int b;
 
+    public static Pixel of(int rgb){
+        return new Pixel((rgb>>16)&0xff, (rgb>>8)&0xff, rgb&0xff);
+    }
+
     public Pixel() {
     }
 

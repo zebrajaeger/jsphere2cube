@@ -48,12 +48,12 @@ public class FaceRenderer {
                 y = 1d;
                 z = 1d - b;
             }
-            case TOP -> {
+            case UP -> {
                 x = 1d - b;
                 y = a - 1d;
                 z = 1d;
             }
-            case BOTTOM -> {
+            case DOWN -> {
                 x = 1d - b;
                 y = a - 1d;
                 z = -1d;

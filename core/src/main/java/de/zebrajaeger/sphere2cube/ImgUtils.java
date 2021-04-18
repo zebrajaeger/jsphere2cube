@@ -1,5 +1,6 @@
 package de.zebrajaeger.sphere2cube;
 
+import net.jafama.FastMath;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,6 +59,52 @@ public class ImgUtils {
             ImageWriteParam writerParams = writer.getDefaultWriteParam();
             writer.setOutput(ImageIO.createImageOutputStream(os));
             writer.write(null, new IIOImage(bufferedImage, null, null), writerParams);
+        }
+    }
+
+    public static void drawRectangularCross(WriteableImage img, Pixel color) {
+        int e = FastMath.min(img.getWidth(), img.getHeight());
+        for (int i = 0; i < e; ++i) {
+            img.setPixel(i, i, color);
+            img.setPixel(e - i - 1, i, color);
+        }
+    }
+    public static void drawDottedRectangularCross(WriteableImage img, Pixel color) {
+        int e = FastMath.min(img.getWidth(), img.getHeight());
+        for (int i = 0; i < e; ++i) {
+            if(i%8==3 || i%8==4) {
+                img.setPixel(i, i, color);
+                img.setPixel(e - i - 1, i, color);
+            }
+        }
+    }
+
+    public static void drawBorder(WriteableImage img, Pixel color) {
+        int h = img.getHeight();
+        int w = img.getWidth();
+        for (int i = 0; i < w; ++i) {
+            img.setPixel(i, 0, color);
+            img.setPixel(i, h - 1, color);
+        }
+        for (int i = 0; i < h; ++i) {
+            img.setPixel(0, i, color);
+            img.setPixel(w - 1, i, color);
+        }
+    }
+    public static void drawDottedBorder(WriteableImage img, Pixel color) {
+        int h = img.getHeight();
+        int w = img.getWidth();
+        for (int i = 0; i < w; ++i) {
+            if(i%8==3 || i%8==4) {
+                img.setPixel(i, 0, color);
+                img.setPixel(i, h - 1, color);
+            }
+        }
+        for (int i = 0; i < h; ++i) {
+            if(i%8==3 || i%8==4) {
+                img.setPixel(0, i, color);
+                img.setPixel(w - 1, i, color);
+            }
         }
     }
 }
