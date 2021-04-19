@@ -170,7 +170,9 @@ public class App {
             Img cubeFace = Img.rectangular(faceEdge);
             for (Face face : Face.values()) {
                 LOG.info("Render face: '{}' - {}x{}", face, faceEdge, faceEdge);
+                Chronograph faceChronograph = Chronograph.start();
                 FaceRenderExecutor.renderFace(source, cubeFace, face);
+                LOG.info("Render face in '{}'", faceChronograph.stop());
                 if (debug) {
                     ImgUtils.drawBorder(cubeFace, face.getColor());
                 }
