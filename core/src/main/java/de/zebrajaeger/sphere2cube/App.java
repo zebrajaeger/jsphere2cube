@@ -27,6 +27,7 @@ public class App {
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) throws IOException, InterruptedException, ParseException {
+        Chronograph appChronograph = Chronograph.start();
         Config config;
 
         if (args.length == 0) {
@@ -160,14 +161,13 @@ public class App {
             Chronograph previewChronograph = Chronograph.start();
             FileUtils.forceMkdirParent(previewScaledOriginalTarget);
 
-            BilinearScaler scaler = new BilinearScaler();
             float factor;
             if (sourceImage.getWidth() > sourceImage.getHeight()) {
                 factor = (float) sourceImage.getWidth() / (float) previewScaledOriginalEdge;
             } else {
                 factor = (float) sourceImage.getHeight() / (float) previewScaledOriginalEdge;
             }
-            Img scaled = scaler.scale(sourceImage, (int) (source.getWidth() / factor), (int) (source.getHeight() / factor));
+            Img scaled = BilinearScaler.scale(sourceImage, (int) (source.getWidth() / factor), (int) (source.getHeight() / factor));
             LOG.info("Rendered preview scaled in '{}'", previewChronograph.stop());
 
             LOG.info("Save preview scaled: '{}'", previewScaledOriginalTarget.getAbsolutePath());
@@ -228,7 +228,7 @@ public class App {
                             }
                         }
                         tsc.shutdown();
-                        LOG.info("Tiles sved in {}", tileSaveChronograph.stop());
+                        LOG.info("Tiles saved in {}", tileSaveChronograph.stop());
 
                         // downscale cube face image
                         if (levelIndex > 0) {
@@ -250,5 +250,7 @@ public class App {
             String html = pannellum.render(pannellumConfig);
             FileUtils.write(viewerPannellumFile, html, StandardCharsets.UTF_8);
         }
+
+        LOG.info("Completed in {}", appChronograph.stop());
     }
 }
