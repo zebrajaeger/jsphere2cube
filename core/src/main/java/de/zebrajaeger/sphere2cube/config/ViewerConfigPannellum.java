@@ -6,8 +6,6 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import java.io.File;
 
 public class ViewerConfigPannellum {
-    @JsonIgnore
-    private File outputFolder;
 
     private boolean enabled = true;
     private String pageTitle = "cube2sphere - pannellum";
@@ -35,14 +33,6 @@ public class ViewerConfigPannellum {
 
     public void setTarget(String target) {
         this.target = target;
-    }
-
-    public File getOutputFolder() {
-        return outputFolder;
-    }
-
-    public void setOutputFolder(File outputFolder) {
-        this.outputFolder = outputFolder;
     }
 
     @Override

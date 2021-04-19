@@ -21,8 +21,4 @@ public class ViewerConfig {
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
     }
-
-    public void setOutputFolder(File outputFolder) {
-        pannellum.setOutputFolder(outputFolder);
-    }
 }

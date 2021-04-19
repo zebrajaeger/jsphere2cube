@@ -16,21 +16,18 @@ public class Config {
     private boolean debug;
     @JsonIgnore
     private SaveConfig saveConfig = new SaveConfig();
-
     @JsonProperty("source")
     private InputConfig inputConfig = new InputConfig();
-
     @JsonProperty("target")
     private File outputFolder = new File("./build");
-
     @JsonProperty("preview")
     PreviewsConfig previewsConfig = new PreviewsConfig();
-
     @JsonProperty("cubemap")
     CubeMapConfig cubeMapConfig = new CubeMapConfig();
-
     @JsonProperty("viewer")
     ViewerConfig viewerConfig = new ViewerConfig();
+    @JsonProperty("archive")
+    ArchiveConfig archiveConfig = new ArchiveConfig();
 
     public static void help() {
         HelpFormatter formatter = new HelpFormatter();
@@ -133,6 +130,14 @@ public class Config {
             config.getViewerConfig().getPannellum().setTarget(cmd.getOptionValue("vpt"));
         }
 
+        // Archive
+        if (cmd.hasOption("a")) {
+            config.getArchiveConfig().setEnabled(cmd.hasOption("a"));
+        }
+        if (cmd.hasOption("at")) {
+            config.getArchiveConfig().setTarget(cmd.getOptionValue("at"));
+        }
+
         return config;
     }
 
@@ -179,9 +184,14 @@ public class Config {
         options.addOption("ctt", "cube-tiles-target", true, "Cube tiles image path template.");
         options.addOption("cte", "cube-tiles-edge", true, "Cube tiles edge size.");
 
-        // viewer
+        // Viewer
         options.addOption("vp", "viewer-pannellum", false, "Render pannellum html file.");
-        options.addOption("vpt", "viewer-pannellum-target", false, "Pannellum target file path.");
+        options.addOption("vpt", "viewer-pannellum-target", true, "Pannellum target file path.");
+
+        // Archive
+        options.addOption("a", "archive", false, "Create archive.");
+        options.addOption("at", "archive-target", true, "Archive target file path.");
+
         return options;
     }
 
@@ -203,16 +213,12 @@ public class Config {
         this.debug = debug;
     }
 
-
     public File getOutputFolder() {
         return outputFolder;
     }
 
     public void setOutputFolder(File outputFolder) {
         this.outputFolder = outputFolder;
-        previewsConfig.setOutputFolder(outputFolder);
-        cubeMapConfig.setOutputFolder(outputFolder);
-        viewerConfig.setOutputFolder(outputFolder);
     }
 
     public PreviewsConfig getPreviewsConfig() {
@@ -253,5 +259,13 @@ public class Config {
 
     public void setSaveConfig(SaveConfig saveConfig) {
         this.saveConfig = saveConfig;
+    }
+
+    public ArchiveConfig getArchiveConfig() {
+        return archiveConfig;
+    }
+
+    public void setArchiveConfig(ArchiveConfig archiveConfig) {
+        this.archiveConfig = archiveConfig;
     }
 }

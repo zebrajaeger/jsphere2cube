@@ -1,15 +1,9 @@
 package de.zebrajaeger.sphere2cube.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import java.io.File;
-
 public class CubeMapTilesConfig {
-    @JsonIgnore
-    private File outputFolder;
-
     @JsonProperty
     private boolean enabled = true;
     @JsonProperty
@@ -39,14 +33,6 @@ public class CubeMapTilesConfig {
 
     public void setTarget(String target) {
         this.target = target;
-    }
-
-    public File getOutputFolder() {
-        return outputFolder;
-    }
-
-    public void setOutputFolder(File outputFolder) {
-        this.outputFolder = outputFolder;
     }
 
     @Override

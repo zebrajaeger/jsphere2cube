@@ -27,11 +27,6 @@ public class CubeMapConfig {
         this.faces = faces;
     }
 
-    public void setOutputFolder(File outputFolder) {
-        tiles.setOutputFolder(outputFolder);
-        faces.setOutputFolder(outputFolder);
-    }
-
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);

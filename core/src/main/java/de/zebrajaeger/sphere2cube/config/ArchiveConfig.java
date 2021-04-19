@@ -1,13 +1,12 @@
 package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-public class CubeMapFacesConfig {
+public class ArchiveConfig {
     @JsonProperty
-    private boolean enabled;
+    private boolean enabled = true;
     @JsonProperty
-    private String target = "{{faceNameLowerCase}}_{{levelCount}}.png";
+    private String target = "pano.zip";
 
     public boolean isEnabled() {
         return enabled;
@@ -23,10 +22,5 @@ public class CubeMapFacesConfig {
 
     public void setTarget(String target) {
         this.target = target;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
     }
 }
