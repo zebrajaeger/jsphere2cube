@@ -1,11 +1,13 @@
 package de.zebrajaeger.sphere2cube;
 
-import de.zebrajaeger.sphere2cube.packbits.PackBitsDecoder;
+import de.zebrajaeger.sphere2cube.multithreading.JobExecutor;
 import de.zebrajaeger.sphere2cube.packbits.PackBitsDecoderJob;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.concurrent.*;
 
 public class PSD implements ReadableImage {
     int width;
@@ -53,6 +55,18 @@ public class PSD implements ReadableImage {
         return ((lines[y].get(x) & 0xff) << 16) + ((lines[y + height].get(x) & 0xff) << 8) + (lines[y + height + height].get(x) & 0xff);
     }
 
+    public static String toImageSize(long pixelCount) {
+        if (pixelCount < 1000) {
+            return String.format("%d px", pixelCount);
+        } else if (pixelCount < 1000 * 1000) {
+            return String.format("%.2f Kpx", pixelCount / (float) 1000);
+        } else if (pixelCount < 1000 * 1000 * 1000) {
+            return String.format("%.2f Mpx", pixelCount / (float) (1000 * 1000));
+        } else {
+            return String.format("%.2f Gpx", pixelCount / (float) (1000 * 1000 * 1000));
+        }
+    }
+
     void readRAWData(ExtendedInputStream dis) throws IOException {
         System.out.println("read RAW Data");
         int lineCount = height * channels;
@@ -77,29 +91,21 @@ public class PSD implements ReadableImage {
             }
         }
 
-        int cores = Runtime.getRuntime().availableProcessors();
-        System.out.println("Using threads: " + cores);
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cores);
-
+        JobExecutor executor = new JobExecutor();
         lines = new ByteBuffer[lineCount];
         for (int i = 0; i < lineCount; ++i) {
             ByteBuffer bb = ByteBuffer.allocateDirect(width);
             lines[i] = bb;
-            PackBitsDecoderJob job = new PackBitsDecoderJob( i, extendedInputStream.readNewBuffer((int) lineSizes[i]), bb);
-            executor.submit(job);
-            while (executor.getQueue().size() > 100) {
+            PackBitsDecoderJob job = new PackBitsDecoderJob(i, extendedInputStream.readNewBuffer((int) lineSizes[i]), bb);
+            executor.addJob(job);
+            while (executor.getExecutor().getQueue().size() > 100) {
                 Thread.sleep(1);
             }
         }
-        while (executor.getActiveCount() > 0) {
+        while (executor.getExecutor().getActiveCount() > 0) {
             Thread.sleep(1);
         }
         executor.shutdown();
-        boolean terminated = executor.awaitTermination(1, TimeUnit.MINUTES);
-        if (!terminated) {
-            // timeout
-            System.err.println("Executor timeout");
-        }
     }
 
     void readData(ExtendedInputStream dis) throws IOException, InterruptedException {
@@ -134,6 +140,7 @@ public class PSD implements ReadableImage {
         }
         width = (int) w;
         System.out.println("Width: " + width);
+        System.out.println("Size: " + toImageSize((long) width * height));
         System.out.println("Depth: " + dis.readU16());
         System.out.println("ColorMode: " + dis.readU16());
 

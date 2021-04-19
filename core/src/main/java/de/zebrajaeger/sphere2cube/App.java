@@ -2,6 +2,7 @@ package de.zebrajaeger.sphere2cube;
 
 import de.zebrajaeger.sphere2cube.config.Config;
 import de.zebrajaeger.sphere2cube.facerenderer.FaceRenderExecutor;
+import de.zebrajaeger.sphere2cube.multithreading.JobExecutor;
 import de.zebrajaeger.sphere2cube.names.CubeFaceNameGenerator;
 import de.zebrajaeger.sphere2cube.names.TileNameGenerator;
 import de.zebrajaeger.sphere2cube.pano.PanoInfo;
@@ -9,8 +10,7 @@ import de.zebrajaeger.sphere2cube.pano.PanoLevel;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
-import de.zebrajaeger.sphere2cube.tiles.TileSaveExecutor;
-import de.zebrajaeger.sphere2cube.tiles.TileSaveExecutorJob;
+import de.zebrajaeger.sphere2cube.tiles.TileSaveJob;
 import de.zebrajaeger.sphere2cube.viewer.PanellumConfig;
 import de.zebrajaeger.sphere2cube.viewer.Pannellum;
 import org.apache.commons.cli.ParseException;
@@ -125,27 +125,39 @@ public class App {
 
         // generate cube preview
         if (previewCubeEnabled) {
-            LOG.info("Render preview cubemap: '{}'", previewCubeTarget.getAbsolutePath());
+            LOG.info("Render preview cubemap");
+            Chronograph previewChronograph = Chronograph.start();
             FileUtils.forceMkdirParent(previewCubeTarget);
             CubeMapImage cubeMapImage = new CubeMapImage(previewCubeEdge);
             for (Face face : Face.values()) {
                 FaceRenderExecutor.renderFace(source, cubeMapImage.getFaceImg(face), face);
             }
+            LOG.info("Rendered preview cubemap in {}", previewChronograph.stop());
+
+            LOG.info("Save preview cube: '{}'", previewCubeTarget.getAbsolutePath());
+            previewChronograph = Chronograph.start();
             ImgUtils.save(cubeMapImage, previewCubeTarget, 0.85f);
+            LOG.info("Saved preview cube in: '{}'", previewChronograph.stop());
         }
 
         // generate Equirectangular preview
         if (previewEquirectangularEnabled) {
-            LOG.info("Render equirectangular: '{}'", previewEquirectangularTarget.getAbsolutePath());
+            LOG.info("Render preview equirectangular");
+            Chronograph previewChronograph = Chronograph.start();
             FileUtils.forceMkdirParent(previewEquirectangularTarget);
-            BilinearScaler scaler = new BilinearScaler();
-            Img scaled = scaler.scale(source, previewEquirectangularEdge * 2, previewEquirectangularEdge);
+            Img scaled = BilinearScaler.scale(source, previewEquirectangularEdge * 2, previewEquirectangularEdge);
+            LOG.info("Rendered preview equirectangular in '{}'", previewChronograph.stop());
+
+            LOG.info("Save preview equirectangular: '{}'", previewEquirectangularTarget.getAbsolutePath());
+            previewChronograph = Chronograph.start();
             ImgUtils.save(scaled, previewEquirectangularTarget, 0.85f);
+            LOG.info("Saved preview equirectangular in: '{}'", previewChronograph.stop());
         }
 
         // generate scaled original preview
         if (previewScaledOriginalEnabled) {
-            LOG.info("Render preview scaled: '{}'", previewScaledOriginalTarget.getAbsolutePath());
+            LOG.info("Render preview scaled");
+            Chronograph previewChronograph = Chronograph.start();
             FileUtils.forceMkdirParent(previewScaledOriginalTarget);
 
             BilinearScaler scaler = new BilinearScaler();
@@ -156,7 +168,12 @@ public class App {
                 factor = (float) sourceImage.getHeight() / (float) previewScaledOriginalEdge;
             }
             Img scaled = scaler.scale(sourceImage, (int) (source.getWidth() / factor), (int) (source.getHeight() / factor));
+            LOG.info("Rendered preview scaled in '{}'", previewChronograph.stop());
+
+            LOG.info("Save preview scaled: '{}'", previewScaledOriginalTarget.getAbsolutePath());
+            previewChronograph = Chronograph.start();
             ImgUtils.save(scaled, previewScaledOriginalTarget, 0.85f);
+            LOG.info("Saved preview scaled in: '{}'", previewChronograph.stop());
         }
 
         // cube map faces
@@ -177,29 +194,31 @@ public class App {
                     ImgUtils.drawBorder(cubeFace, face.getColor());
                 }
 
-                if (cubeMapTilesEnabled) {
+                if (cubeMapTilesEnabled || cubeMapFacesEnabled) {
                     Img scaledCubeFace = cubeFace;
-                    DownHalfScaler downHalfScaler = new DownHalfScaler();
-                    Img tile = Img.rectangular(tileEdge);
                     for (int levelIndex = panoInfo.getMaxLevelIndex(); levelIndex >= 0; --levelIndex) {
 
                         if (cubeMapFacesEnabled) {
                             File faceFile = new File(outputFolder, cubeFaceNameGenerator.generate(panoInfo, levelIndex, face));
                             LOG.info("Save cube face: '{}' -> {}", face, faceFile.getAbsolutePath());
+                            Chronograph cubeFaceSaveChronograph = Chronograph.start();
                             FileUtils.forceMkdirParent(faceFile);
                             ImgUtils.save(scaledCubeFace, faceFile, null);
+                            LOG.info("Save cube face in '{}'", cubeFaceSaveChronograph.stop());
                         }
                         PanoLevel level = panoInfo.getLevel(levelIndex);
 
                         // render tiles for face and level
                         int tileCount = level.getTileCount();
 
-                        TileSaveExecutor tsc = new TileSaveExecutor();
+                        LOG.info("Save tiles");
+                        Chronograph tileSaveChronograph = Chronograph.start();
+                        JobExecutor tsc = new JobExecutor();
                         for (int yIndex = 0; yIndex < tileCount; ++yIndex) {
                             for (int xIndex = 0; xIndex < tileCount; ++xIndex) {
                                 String name = tileNameGenerator.generate(panoInfo, levelIndex, face, xIndex, yIndex);
 
-                                tsc.addJob(new TileSaveExecutorJob(
+                                tsc.addJob(new TileSaveJob(
                                         scaledCubeFace,
                                         new File(outputFolder, name),
                                         tileEdge,
@@ -209,12 +228,15 @@ public class App {
                             }
                         }
                         tsc.shutdown();
+                        LOG.info("Tiles sved in {}", tileSaveChronograph.stop());
 
                         // downscale cube face image
                         if (levelIndex > 0) {
+                            Chronograph downscaleChronograph = Chronograph.start();
                             int newEdge2 = level.getFaceEdge() / 2;
                             LOG.info("Downscale face to 1/2 = {},{}", newEdge2, newEdge2);
-                            scaledCubeFace = downHalfScaler.scale(scaledCubeFace);
+                            scaledCubeFace = DownHalfScaler.scale(scaledCubeFace);
+                            LOG.info("Downscaled face in {}", downscaleChronograph.stop());
                         }
                     }
                 }

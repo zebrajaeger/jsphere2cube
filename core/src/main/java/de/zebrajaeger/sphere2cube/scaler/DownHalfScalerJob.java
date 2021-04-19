@@ -3,9 +3,10 @@ package de.zebrajaeger.sphere2cube.scaler;
 import de.zebrajaeger.sphere2cube.Pixel;
 import de.zebrajaeger.sphere2cube.ReadableImage;
 import de.zebrajaeger.sphere2cube.WriteableImage;
+import de.zebrajaeger.sphere2cube.multithreading.Job;
 import net.jafama.FastMath;
 
-public class DownHalfScalerJob implements Runnable {
+public class DownHalfScalerJob implements Job {
     private final ReadableImage source;
     private final WriteableImage target;
     private final int lineToProcess;

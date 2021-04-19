@@ -3,8 +3,9 @@ package de.zebrajaeger.sphere2cube.facerenderer;
 import de.zebrajaeger.sphere2cube.Face;
 import de.zebrajaeger.sphere2cube.Pixel;
 import de.zebrajaeger.sphere2cube.WriteableImage;
+import de.zebrajaeger.sphere2cube.multithreading.Job;
 
-public class FaceRenderJob implements Runnable {
+public class FaceRenderJob implements Job {
     private final FaceRenderer faceRenderer;
     private final Face face;
     private final WriteableImage target;
@@ -24,7 +25,7 @@ public class FaceRenderJob implements Runnable {
         try {
             Pixel pixel = new Pixel();
             for (int x = 0; x < targetEdge; ++x) {
-                boolean invertY = face==Face.UP;
+                boolean invertY = face == Face.UP;
                 boolean invertX = false;
                 faceRenderer.calculatePixel(invertX, invertY, x, lineToRender, face, targetEdge, pixel);
                 target.setPixel(x, lineToRender, pixel);

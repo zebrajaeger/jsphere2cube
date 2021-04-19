@@ -1,13 +1,14 @@
 package de.zebrajaeger.sphere2cube.packbits;
 
 import de.zebrajaeger.sphere2cube.PSD;
+import de.zebrajaeger.sphere2cube.multithreading.Job;
 import de.zebrajaeger.sphere2cube.packbits.DecodeResult;
 import de.zebrajaeger.sphere2cube.packbits.PackBitsDecoder;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class PackBitsDecoderJob implements Runnable {
+public class PackBitsDecoderJob implements Job {
     private final int index;
     private final byte[] source;
     private final ByteBuffer target;

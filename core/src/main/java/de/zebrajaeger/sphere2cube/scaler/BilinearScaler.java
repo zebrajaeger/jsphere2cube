@@ -2,24 +2,42 @@ package de.zebrajaeger.sphere2cube.scaler;
 
 import de.zebrajaeger.sphere2cube.Img;
 import de.zebrajaeger.sphere2cube.ReadableImage;
+import de.zebrajaeger.sphere2cube.multithreading.JobExecutor;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-public class BilinearScaler implements Scaler {
+public class BilinearScaler extends JobExecutor {
+    private Img target;
 
-    @Override
-    public Img scale(ReadableImage source, int targetWidth, int targetHeight) throws InterruptedException {
-        int cores = Runtime.getRuntime().availableProcessors();
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cores);
+    public static Img scale(ReadableImage source, int targetWidth, int targetHeight) throws InterruptedException {
+        BilinearScaler bilinearScaler = new BilinearScaler();
+        bilinearScaler.start(source, targetWidth, targetHeight);
+        bilinearScaler.shutdown();
+        return bilinearScaler.getTarget();
+    }
 
-        Img target = new Img(targetWidth, targetHeight);
-        for (int y = 0; y < targetHeight; ++y) {
-            executor.submit(new BilinearScalerJob(source, target, y));
-        }
-        executor.shutdown();
-        executor.awaitTermination(365, TimeUnit.DAYS);
+    public static Img scale(ThreadPoolExecutor executor, ReadableImage source, int targetWidth, int targetHeight) throws InterruptedException {
+        BilinearScaler bilinearScaler = new BilinearScaler(executor);
+        bilinearScaler.start(source, targetWidth, targetHeight);
+        bilinearScaler.shutdown();
+        return bilinearScaler.getTarget();
+    }
+
+    public BilinearScaler(ThreadPoolExecutor executor) {
+        super(executor);
+    }
+
+    public BilinearScaler() {
+    }
+
+    public Img getTarget() {
         return target;
+    }
+
+    public void start(ReadableImage source, int targetWidth, int targetHeight) throws InterruptedException {
+        target = new Img(targetWidth, targetHeight);
+        for (int y = 0; y < targetHeight; ++y) {
+            addJob(new BilinearScalerJob(source, target, y));
+        }
     }
 }

@@ -1,5 +1,5 @@
 {
-  "debug" : true,
+  "debug" : false,
   "source" : {
     "path" : "/home/l/prj/panos/(IMG_9494-IMG_9603-110)-{d=S-360.00x137.92(-9.87)}-{p=IMG_9494_IMG_9603-110 (2011-07-12)}.psb",
     "angel" : 360.0
@@ -7,35 +7,35 @@
   "target" : "./temp",
   "preview" : {
     "cubemap" : {
-      "enabled" : false,
+      "enabled" : true,
       "edge" : 200,
       "target" : "preview_cube.jpg"
     },
     "equirectangular" : {
-      "enabled" : false,
+      "enabled" : true,
       "edge" : 200,
       "target" : "preview_equirectangular.jpg"
     },
     "scaled" : {
-      "enabled" : false,
+      "enabled" : true,
       "edge" : 200,
       "target" : "preview_scaled.jpg"
     }
   },
   "cubemap" : {
     "tiles" : {
-      "enabled" : false,
+      "enabled" : true,
       "tileEdge" : 512,
       "target" : "{{levelCount}}/{{faceNameShortLowerCase}}{{xIndex}}_{{yIndex}}.png"
     },
     "faces" : {
-      "enabled" : true,
+      "enabled" : false,
       "target" : "{{faceNameLowerCase}}_{{levelCount}}.png"
     }
   },
   "viewer" : {
     "pannellum" : {
-      "enabled" : false,
+      "enabled" : true,
       "pageTitle" : "cube2sphere - pannellum",
       "target" : "index.p.html"
     }

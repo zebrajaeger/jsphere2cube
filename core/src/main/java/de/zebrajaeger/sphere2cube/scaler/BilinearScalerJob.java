@@ -3,8 +3,9 @@ package de.zebrajaeger.sphere2cube.scaler;
 import de.zebrajaeger.sphere2cube.Pixel;
 import de.zebrajaeger.sphere2cube.ReadableImage;
 import de.zebrajaeger.sphere2cube.WriteableImage;
+import de.zebrajaeger.sphere2cube.multithreading.Job;
 
-public class BilinearScalerJob implements Runnable {
+public class BilinearScalerJob implements Job {
     private final ReadableImage source;
     private final WriteableImage target;
     private final int lineToProcess;
@@ -24,8 +25,8 @@ public class BilinearScalerJob implements Runnable {
         int targetHeight = target.getHeight();
 
 
-        float tx = (float) sourceWidth / (float) (targetWidth-1);
-        float ty = (float) sourceHeight / (float) (targetHeight-1);
+        float tx = (float) sourceWidth / (float) (targetWidth - 1);
+        float ty = (float) sourceHeight / (float) (targetHeight - 1);
         Pixel p1 = new Pixel();
         Pixel p2 = new Pixel();
         Pixel p3 = new Pixel();
