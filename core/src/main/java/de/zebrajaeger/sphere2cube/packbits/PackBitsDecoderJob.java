@@ -1,14 +1,14 @@
 package de.zebrajaeger.sphere2cube.packbits;
 
-import de.zebrajaeger.sphere2cube.PSD;
 import de.zebrajaeger.sphere2cube.multithreading.Job;
-import de.zebrajaeger.sphere2cube.packbits.DecodeResult;
-import de.zebrajaeger.sphere2cube.packbits.PackBitsDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class PackBitsDecoderJob extends Job {
+    private static final Logger LOG = LoggerFactory.getLogger(PackBitsDecoderJob.class);
+
     private final int index;
     private final byte[] source;
     private final ByteBuffer target;
@@ -24,10 +24,11 @@ public class PackBitsDecoderJob extends Job {
         PackBitsDecoder decoder = new PackBitsDecoder();
         try {
             DecodeResult result = decoder.decode(source, target);
-            // TODO check size
-        } catch (IOException e) {
-            System.out.println("FAIL " + index);
-            e.printStackTrace();
+            if (target.capacity() != result.getOutputCount()) {
+                LOG.error("Packbit result @ index: '{}' wrong (expected:{} but is {})", index, target.capacity(), result.getOutputCount());
+            }
+        } catch (Exception e) {
+            LOG.error("Packbit index: '{}'", index, e);
         }
     }
 }

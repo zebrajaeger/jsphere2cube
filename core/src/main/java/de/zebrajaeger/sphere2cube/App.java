@@ -80,8 +80,8 @@ public class App {
         File previewCubeTarget = new File(outputFolder, "preview_cube.jpg");
 
         // Preview Equirectangular
-        boolean previewEquirectangularEnabled = config.getPreviewsConfig().getCubeMapPreview().isEnabled();
-        int previewEquirectangularEdge = config.getPreviewsConfig().getCubeMapPreview().getEdge();
+        boolean previewEquirectangularEnabled = config.getPreviewsConfig().getEquirectangularPreview().isEnabled();
+        int previewEquirectangularEdge = config.getPreviewsConfig().getEquirectangularPreview().getEdge();
         File previewEquirectangularTarget = new File(outputFolder, "preview_equirectangular.jpg");
 
         // Preview Scaled

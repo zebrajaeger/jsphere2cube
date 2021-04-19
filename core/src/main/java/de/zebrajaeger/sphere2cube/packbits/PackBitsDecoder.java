@@ -50,7 +50,6 @@ package de.zebrajaeger.sphere2cube.packbits;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import javax.imageio.stream.ImageInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -89,9 +88,10 @@ import java.nio.ByteBuffer;
  */
 public final class PackBitsDecoder {
     // TODO: Look at ICNSImageReader#unpackbits... What is this weirdness?
-
+    private final static int BUFFER_SIZE = 1024;
     private final boolean disableNoOp;
     private final byte[] sample;
+    private final byte[] buffer = new byte[BUFFER_SIZE];
 
     private int leftOfRun;
     private boolean splitRun;
@@ -209,24 +209,21 @@ public final class PackBitsDecoder {
         return (byte) read;
     }
 
-    static int readFully(final InputStream pStream, final ByteBuffer pBuffer, final int pLength) throws IOException {
-        if (pLength < 0) {
-            throw new IndexOutOfBoundsException(String.format("Negative length: %d", pLength));
+    int readFully(final InputStream source, final ByteBuffer target, final int length) throws IOException {
+        if (length < 0) {
+            throw new IndexOutOfBoundsException(String.format("Negative length: %d", length));
         }
 
         int total = 0;
-
-        while (total < pLength) {
-            int count = pStream.read(pBuffer.array(), pBuffer.arrayOffset() + pBuffer.position() + total, pLength - total);
-
-            if (count < 0) {
+        int l;
+        while (total < length) {
+            l = source.read(buffer, 0, Math.min(length, BUFFER_SIZE));
+            if (l < 0) {
                 throw new EOFException("Unexpected end of PackBits stream");
             }
-
-            total += count;
+            target.put(buffer, 0, l);
+            total += l;
         }
-
-        pBuffer.position(pBuffer.position() + total);
 
         return total;
     }
