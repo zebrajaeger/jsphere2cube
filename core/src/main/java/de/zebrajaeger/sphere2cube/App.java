@@ -108,11 +108,13 @@ public class App {
         LOG.info("Load source image: '{}'", inputImageFile.getAbsolutePath());
         String ext = FilenameUtils.getExtension(inputImageFile.getName()).toLowerCase();
         ReadableImage sourceImage;
+        Chronograph chronograph = Chronograph.start();
         if ("psd".equals(ext) || "psb".equals(ext)) {
             sourceImage = PSD.of(inputImageFile);
         } else {
             sourceImage = new Img(inputImageFile);
         }
+        LOG.info("Loaded source image in '{}'", chronograph.stop());
         EquirectangularImage source = EquirectangularImage.of(sourceImage, inputImageHorizontalAngel);
 
         PanoInfo panoInfo = PanoUtils.calcPanoInfo(source, tileEdge);
