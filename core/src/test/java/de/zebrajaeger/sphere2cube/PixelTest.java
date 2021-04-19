@@ -3,6 +3,7 @@ package de.zebrajaeger.sphere2cube;
 import de.zebrajaeger.sphere2cube.facerenderer.FaceRenderExecutor;
 import de.zebrajaeger.sphere2cube.pano.PanoInfo;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
+import de.zebrajaeger.sphere2cube.progress.Progress;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
@@ -49,15 +50,6 @@ class PixelTest {
     }
 
     @Test
-    void cube() throws IOException, InterruptedException {
-        Img img1 = new Img(new File("/home/l/Dokumente/sphere2cube/7Lo6s.jpg"));
-        EquirectangularImage source = EquirectangularImage.of(img1, 360d);
-        System.out.println(source);
-        Img faceImg = FaceRenderExecutor.renderFace(source, Face.FRONT, 1000);
-        ImgUtils.saveAsJpg(faceImg, new File("test_front.jpg"), 1f);
-    }
-
-    @Test
     void bilinearScaler() throws IOException, InterruptedException {
         Img img1 = new Img(new File("/home/l/Dokumente/sphere2cube/7Lo6s.jpg"));
         BilinearScaler s = new BilinearScaler();
@@ -81,7 +73,7 @@ class PixelTest {
 
         CubeMapImage cubeMapImage = new CubeMapImage(500);
         for (Face face : Face.values()) {
-            FaceRenderExecutor.renderFace(source, cubeMapImage.getFaceImg(face), face);
+            FaceRenderExecutor.renderFace(source, cubeMapImage.getFaceImg(face), face, Progress.DUMMY);
         }
         ImgUtils.saveAsJpg(cubeMapImage, new File("test_cubemap.jpg"), 1f);
     }
@@ -91,13 +83,14 @@ class PixelTest {
         File f = new File("*abc");
         System.out.println(f.getAbsolutePath());
     }
+
     @Test
     void imgSize() throws IOException, InterruptedException {
         System.out.println(PSD.toImageSize(100));
         System.out.println(PSD.toImageSize(1024));
-        System.out.println(PSD.toImageSize(1024*1024));
-        System.out.println(PSD.toImageSize(1024*1024*1024));
-        System.out.println(PSD.toImageSize(1024L *1024*1024*22));
+        System.out.println(PSD.toImageSize(1024 * 1024));
+        System.out.println(PSD.toImageSize(1024 * 1024 * 1024));
+        System.out.println(PSD.toImageSize(1024L * 1024 * 1024 * 22));
     }
 
 }

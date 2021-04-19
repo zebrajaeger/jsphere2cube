@@ -39,7 +39,7 @@ public class TileSaveJob extends Job {
             if (debug) {
                 ImgUtils.drawDottedBorder(tile, Pixel.of(0xffffff));
             }
-            LOG.info("Save tile: {}", targetFile.getAbsolutePath());
+            LOG.debug("Save tile: {}", targetFile.getAbsolutePath());
 
             ImgUtils.save(tile, targetFile, null);
         } catch (IOException e) {

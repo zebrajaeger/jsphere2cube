@@ -2,13 +2,14 @@ package de.zebrajaeger.sphere2cube;
 
 import de.zebrajaeger.sphere2cube.config.Config;
 import de.zebrajaeger.sphere2cube.facerenderer.FaceRenderExecutor;
-import de.zebrajaeger.sphere2cube.multithreading.JobExecutor;
+import de.zebrajaeger.sphere2cube.multithreading.MaxJobQueueExecutor;
 import de.zebrajaeger.sphere2cube.names.CubeFaceNameGenerator;
 import de.zebrajaeger.sphere2cube.names.TileNameGenerator;
 import de.zebrajaeger.sphere2cube.pano.PanoInfo;
 import de.zebrajaeger.sphere2cube.pano.PanoLevel;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.progress.ConsoleProgressBar;
+import de.zebrajaeger.sphere2cube.progress.Progress;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.tiles.TileSaveJob;
@@ -132,7 +133,7 @@ public class App {
             FileUtils.forceMkdirParent(previewCubeTarget);
             CubeMapImage cubeMapImage = new CubeMapImage(previewCubeEdge);
             for (Face face : Face.values()) {
-                FaceRenderExecutor.renderFace(source, cubeMapImage.getFaceImg(face), face);
+                FaceRenderExecutor.renderFace(source, cubeMapImage.getFaceImg(face), face, Progress.DUMMY);
             }
             LOG.info("Rendered preview cubemap in {}", previewChronograph.stop());
 
@@ -186,11 +187,16 @@ public class App {
             int faceEdge = panoInfo.getSourceFaceEdge();
 
             Img cubeFace = Img.rectangular(faceEdge);
+            int faceCount = 0;
             for (Face face : Face.values()) {
-                LOG.info("Render face: '{}' - {}x{}", face, faceEdge, faceEdge);
+                faceCount++;
                 Chronograph faceChronograph = Chronograph.start();
-                FaceRenderExecutor.renderFace(source, cubeFace, face);
-                LOG.info("Render face in '{}'", faceChronograph.stop());
+
+                // render face
+                LOG.info("Render face: '{}'({}/6) - {}x{}", face, faceCount, faceEdge, faceEdge);
+                Chronograph faceRenderChronograph = Chronograph.start();
+                FaceRenderExecutor.renderFace(source, cubeFace, face, ConsoleProgressBar.of(String.format("Render %s", face)));
+                LOG.info("Render face in '{}'", faceRenderChronograph.stop());
                 if (debug) {
                     ImgUtils.drawBorder(cubeFace, face.getColor());
                 }
@@ -198,49 +204,58 @@ public class App {
                 if (cubeMapTilesEnabled || cubeMapFacesEnabled) {
                     Img scaledCubeFace = cubeFace;
                     for (int levelIndex = panoInfo.getMaxLevelIndex(); levelIndex >= 0; --levelIndex) {
+                        PanoLevel level = panoInfo.getLevel(levelIndex);
 
+                        // save face image
                         if (cubeMapFacesEnabled) {
                             File faceFile = new File(outputFolder, cubeFaceNameGenerator.generate(panoInfo, levelIndex, face));
-                            LOG.info("Save cube face: '{}' -> {}", face, faceFile.getAbsolutePath());
+                            LOG.info("Save cube face: '{}'({}/6) -> {}", face, faceCount, faceFile.getAbsolutePath());
                             Chronograph cubeFaceSaveChronograph = Chronograph.start();
                             FileUtils.forceMkdirParent(faceFile);
                             ImgUtils.save(scaledCubeFace, faceFile, null);
                             LOG.info("Save cube face in '{}'", cubeFaceSaveChronograph.stop());
                         }
-                        PanoLevel level = panoInfo.getLevel(levelIndex);
 
                         // render tiles for face and level
-                        int tileCount = level.getTileCount();
+                        int lineTileCount = level.getTileCount();
+                        int tileCount = lineTileCount * lineTileCount;
 
-                        LOG.info("Save tiles");
+                        LOG.info("Save tiles of '{}'({}/6): {}", face, faceCount, tileCount);
                         Chronograph tileSaveChronograph = Chronograph.start();
-                        JobExecutor tsc = new JobExecutor();
-                        for (int yIndex = 0; yIndex < tileCount; ++yIndex) {
-                            for (int xIndex = 0; xIndex < tileCount; ++xIndex) {
+                        MaxJobQueueExecutor tileExecutor = MaxJobQueueExecutor.withMaxQueueSize();
+                        ConsoleProgressBar tileProgressBar = ConsoleProgressBar.of(String.format("Tiles of %s", face));
+                        tileProgressBar.start(tileCount);
+                        for (int yIndex = 0; yIndex < lineTileCount; ++yIndex) {
+                            for (int xIndex = 0; xIndex < lineTileCount; ++xIndex) {
                                 String name = tileNameGenerator.generate(panoInfo, levelIndex, face, xIndex, yIndex);
 
-                                tsc.addJob(new TileSaveJob(
+                                tileExecutor.addJob(new TileSaveJob(
                                         scaledCubeFace,
                                         new File(outputFolder, name),
                                         tileEdge,
                                         xIndex * tileEdge,
                                         yIndex * tileEdge,
                                         debug));
+                                tileProgressBar.update((long) yIndex * lineTileCount + xIndex);
                             }
                         }
-                        tsc.shutdown();
+                        tileExecutor.shutdown();
+                        tileProgressBar.finish();
                         LOG.info("Tiles saved in {}", tileSaveChronograph.stop());
 
                         // downscale cube face image
                         if (levelIndex > 0) {
                             Chronograph downscaleChronograph = Chronograph.start();
                             int newEdge2 = level.getFaceEdge() / 2;
-                            LOG.info("Downscale face to 1/2 = {},{}", newEdge2, newEdge2);
-                            scaledCubeFace = DownHalfScaler.scale(scaledCubeFace);
+                            LOG.info("Downscale face '{}'({}/6) to 1/2 = {},{}", face, faceCount, newEdge2, newEdge2);
+                            ConsoleProgressBar downHalfScaleProgress = ConsoleProgressBar.of(String.format("Downscale of %s", face));
+                            scaledCubeFace = DownHalfScaler.scale(scaledCubeFace, downHalfScaleProgress);
                             LOG.info("Downscaled face in {}", downscaleChronograph.stop());
                         }
                     }
                 }
+
+                LOG.info("Face '{}' completed in {}", face, faceChronograph.stop());
             }
         }
 

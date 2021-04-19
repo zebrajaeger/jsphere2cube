@@ -7,9 +7,17 @@ public class MaxJobQueueExecutor extends JobExecutor {
     private int runningJobs = 0;
     private final Object lock = new Object();
 
-    public static MaxJobQueueExecutor withMaxQueueSize(int queuedJobCount){
+    public static MaxJobQueueExecutor withMaxQueueSize(int queuedJobCount) {
         int cores = Runtime.getRuntime().availableProcessors();
         return new MaxJobQueueExecutor(cores + queuedJobCount);
+    }
+
+    public static MaxJobQueueExecutor withMaxQueueSize() {
+        return new MaxJobQueueExecutor();
+    }
+
+    public MaxJobQueueExecutor() {
+        this(Runtime.getRuntime().availableProcessors() * 2);
     }
 
     public MaxJobQueueExecutor(int maxJobCount) {
