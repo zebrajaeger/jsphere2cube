@@ -8,13 +8,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class PackBitsDecoderJob implements Runnable {
-    private final PSD psd;
     private final int index;
     private final byte[] source;
     private final ByteBuffer target;
 
-    public PackBitsDecoderJob(PSD psd, int index, byte[] source, ByteBuffer target) {
-        this.psd = psd;
+    public PackBitsDecoderJob(int index, byte[] source, ByteBuffer target) {
         this.index = index;
         this.source = source;
         this.target = target;

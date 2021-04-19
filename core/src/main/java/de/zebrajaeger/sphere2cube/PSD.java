@@ -12,7 +12,7 @@ public class PSD implements ReadableImage {
     int height;
     int channels;
     int version;
-    byte[][] lines;
+    ByteBuffer[] lines;
 
     private PSD() {
     }
@@ -38,42 +38,42 @@ public class PSD implements ReadableImage {
 
     @Override
     public void getPixel(int x, int y, Pixel target) {
-        target.setR(lines[y][x]);
-        target.setG(lines[y + height][x]);
-        target.setB(lines[y + height + height][x]);
+        target.setR(lines[y].get(x));
+        target.setG(lines[y + height].get(x));
+        target.setB(lines[y + height + height].get(x));
     }
 
     @Override
     public Pixel getPixel(int x, int y) {
-        return new Pixel(lines[y][x], lines[y + height][x], lines[y + height + height][x]);
+        return new Pixel(lines[y].get(x), lines[y + height].get(x), lines[y + height + height].get(x));
     }
 
     @Override
     public int getRGB(int x, int y) {
-        return ((lines[y][x] & 0xff) << 16) + ((lines[y + height][x] & 0xff) << 8) + (lines[y + height + height][x] & 0xff);
+        return ((lines[y].get(x) & 0xff) << 16) + ((lines[y + height].get(x) & 0xff) << 8) + (lines[y + height + height].get(x) & 0xff);
     }
 
     void readRAWData(ExtendedInputStream dis) throws IOException {
         System.out.println("read RAW Data");
         int lineCount = height * channels;
-        lines = new byte[lineCount][];
+        lines = new ByteBuffer[lineCount];
 
         for (int x = 0; x < lineCount; ++x) {
-            lines[x] = dis.readNewBuffer(width);
+            lines[x] = dis.readDirectByteBuffer(width);
         }
     }
 
-    void readRLEData(ExtendedInputStream dis) throws IOException, InterruptedException {
+    void readRLEData(ExtendedInputStream extendedInputStream) throws IOException, InterruptedException {
         System.out.println("read RLE Data");
         int lineCount = height * channels;
         long[] lineSizes = new long[lineCount];
         if (version == 1) {
             for (int i = 0; i < lineCount; ++i) {
-                lineSizes[i] = dis.readU16();
+                lineSizes[i] = extendedInputStream.readU16();
             }
         } else if (version == 2) {
             for (int i = 0; i < lineCount; ++i) {
-                lineSizes[i] = dis.readU32();
+                lineSizes[i] = extendedInputStream.readU32();
             }
         }
 
@@ -81,11 +81,11 @@ public class PSD implements ReadableImage {
         System.out.println("Using threads: " + cores);
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cores);
 
-        lines = new byte[lineCount][];
+        lines = new ByteBuffer[lineCount];
         for (int i = 0; i < lineCount; ++i) {
-            ByteBuffer bb = ByteBuffer.allocate(width);
-            lines[i] = bb.array();
-            PackBitsDecoderJob job = new PackBitsDecoderJob(this, i, dis.readNewBuffer((int) lineSizes[i]), bb);
+            ByteBuffer bb = ByteBuffer.allocateDirect(width);
+            lines[i] = bb;
+            PackBitsDecoderJob job = new PackBitsDecoderJob( i, extendedInputStream.readNewBuffer((int) lineSizes[i]), bb);
             executor.submit(job);
             while (executor.getQueue().size() > 100) {
                 Thread.sleep(1);

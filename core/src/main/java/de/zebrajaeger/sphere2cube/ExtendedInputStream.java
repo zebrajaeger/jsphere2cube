@@ -13,7 +13,7 @@ public class ExtendedInputStream extends DataInputStream {
         super(in);
     }
 
-    byte[] readNewBuffer(int size) throws IOException {
+    public byte[] readNewBuffer(int size) throws IOException {
         byte[] buffer = new byte[size];
         int l = read(buffer);
         if (size != l) {
@@ -22,11 +22,23 @@ public class ExtendedInputStream extends DataInputStream {
         return buffer;
     }
 
-    ByteBuffer readByteBuffer(int size) throws IOException {
-        return ByteBuffer.wrap(readNewBuffer(size));
+    public ByteBuffer readDirectByteBuffer(int size) throws IOException {
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(size);
+        byte[] temp = new byte[1024];
+        int toRead = size;
+        do {
+            int n = Math.min(1024, toRead);
+            int l = read(temp, 0, n);
+            byteBuffer.put(temp, 0, l);
+            if (l <= 0) {
+                throw new IOException("Unexpected end of stream");
+            }
+            toRead -= l;
+        } while (toRead > 0);
+        return byteBuffer;
     }
 
-    String readFixedAsciiString(int size) throws IOException {
+    public String readFixedAsciiString(int size) throws IOException {
         return new String(readNewBuffer(size), StandardCharsets.US_ASCII);
     }
 
@@ -61,5 +73,4 @@ public class ExtendedInputStream extends DataInputStream {
             throw new EOFException();
         return (ch1 << 56) + (ch2 << 48) + (ch3 << 40) + (ch4 << 32) + (ch5 << 24) + (ch6 << 16) + (ch7 << 8) + ch8;
     }
-
 }
