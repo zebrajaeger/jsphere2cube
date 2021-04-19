@@ -2,9 +2,9 @@
 
 ## TODO
 
-- More differentiated logging 
+- ~~More differentiated logging~~ 
 - Progress bar
-- Timer
+- ~~Timer~~
 - Marzipano viewer  
 - input image in tiles / dump to HDD
 - output image in tiles / dump to HDD
