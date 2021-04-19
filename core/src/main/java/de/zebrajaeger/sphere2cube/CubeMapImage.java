@@ -44,7 +44,7 @@ public class CubeMapImage implements ReadableImage {
             case LEFT -> new FaceImage(this, false, false, cubeEdge, cubeEdge);
             case FRONT -> new FaceImage(this, false, false, cubeEdge * 2, cubeEdge);
             case RIGHT -> new FaceImage(this, false, false, cubeEdge * 3, cubeEdge);
-            case UP -> new FaceImage(this, false, true, cubeEdge * 2, 0);
+            case UP -> new FaceImage(this, false, false, cubeEdge * 2, 0);
             case DOWN -> new FaceImage(this, false, false, cubeEdge * 2, cubeEdge * 2);
         };
     }
