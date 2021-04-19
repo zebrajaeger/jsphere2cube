@@ -5,7 +5,7 @@ import de.zebrajaeger.sphere2cube.Pixel;
 import de.zebrajaeger.sphere2cube.WriteableImage;
 import de.zebrajaeger.sphere2cube.multithreading.Job;
 
-public class FaceRenderJob implements Job {
+public class FaceRenderJob extends Job {
     private final FaceRenderer faceRenderer;
     private final Face face;
     private final WriteableImage target;
@@ -21,7 +21,7 @@ public class FaceRenderJob implements Job {
     }
 
     @Override
-    public void run() {
+    public void exec() {
         try {
             Pixel pixel = new Pixel();
             for (int x = 0; x < targetEdge; ++x) {

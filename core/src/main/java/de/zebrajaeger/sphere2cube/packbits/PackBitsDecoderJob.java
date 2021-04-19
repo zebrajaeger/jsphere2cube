@@ -8,7 +8,7 @@ import de.zebrajaeger.sphere2cube.packbits.PackBitsDecoder;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class PackBitsDecoderJob implements Job {
+public class PackBitsDecoderJob extends Job {
     private final int index;
     private final byte[] source;
     private final ByteBuffer target;
@@ -20,7 +20,7 @@ public class PackBitsDecoderJob implements Job {
     }
 
     @Override
-    public void run() {
+    public void exec() {
         PackBitsDecoder decoder = new PackBitsDecoder();
         try {
             DecodeResult result = decoder.decode(source, target);

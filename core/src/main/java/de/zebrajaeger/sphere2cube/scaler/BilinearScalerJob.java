@@ -5,7 +5,7 @@ import de.zebrajaeger.sphere2cube.ReadableImage;
 import de.zebrajaeger.sphere2cube.WriteableImage;
 import de.zebrajaeger.sphere2cube.multithreading.Job;
 
-public class BilinearScalerJob implements Job {
+public class BilinearScalerJob extends Job {
     private final ReadableImage source;
     private final WriteableImage target;
     private final int lineToProcess;
@@ -17,7 +17,7 @@ public class BilinearScalerJob implements Job {
     }
 
     @Override
-    public void run() {
+    public void exec() {
         int sourceWidth = source.getWidth();
         int sourceHeight = source.getHeight();
 

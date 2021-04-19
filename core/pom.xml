@@ -51,7 +51,12 @@
             <version>1.4</version>
         </dependency>
 
-
+        <!-- https://mvnrepository.com/artifact/me.tongfei/progressbar -->
+        <dependency>
+            <groupId>me.tongfei</groupId>
+            <artifactId>progressbar</artifactId>
+            <version>0.9.1</version>
+        </dependency>
 
         <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor &ndash;&gt;-->
 <!--        <dependency>-->

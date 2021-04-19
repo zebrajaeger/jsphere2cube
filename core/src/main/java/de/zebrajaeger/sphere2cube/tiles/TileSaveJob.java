@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
-public class TileSaveJob implements Job {
+public class TileSaveJob extends Job {
     private static final Logger LOG = LoggerFactory.getLogger(TileSaveJob.class);
     private final Img sourceImage;
     private final File targetFile;
@@ -30,7 +30,7 @@ public class TileSaveJob implements Job {
     }
 
     @Override
-    public void run() {
+    public void exec() {
         Img tile = Img.rectangular(targetEdge);
 
         sourceImage.copyTo(tile, xOffset, yOffset);

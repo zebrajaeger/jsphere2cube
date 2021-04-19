@@ -23,7 +23,7 @@ class PixelTest {
         File f_5000M = new File(dir, "(IMG_9494-IMG_9603-110)-{d=S-360.00x137.92(-9.87)}-{p=IMG_9494_IMG_9603-110 (2011-07-12)}.psb");
 
         sw.start();
-        PSD psd = PSD.of(f_5000M);
+        PSD psd = PSD.of(f_5000M, null);
 
         sw.stop();
 

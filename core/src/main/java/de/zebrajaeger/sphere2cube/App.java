@@ -8,6 +8,7 @@ import de.zebrajaeger.sphere2cube.names.TileNameGenerator;
 import de.zebrajaeger.sphere2cube.pano.PanoInfo;
 import de.zebrajaeger.sphere2cube.pano.PanoLevel;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
+import de.zebrajaeger.sphere2cube.progress.ConsoleProgressBar;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.tiles.TileSaveJob;
@@ -111,7 +112,7 @@ public class App {
         ReadableImage sourceImage;
         Chronograph chronograph = Chronograph.start();
         if ("psd".equals(ext) || "psb".equals(ext)) {
-            sourceImage = PSD.of(inputImageFile);
+            sourceImage = PSD.of(inputImageFile, ConsoleProgressBar.of(""));
         } else {
             sourceImage = new Img(inputImageFile);
         }

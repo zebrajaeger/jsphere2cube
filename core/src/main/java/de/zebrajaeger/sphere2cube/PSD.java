@@ -1,7 +1,8 @@
 package de.zebrajaeger.sphere2cube;
 
-import de.zebrajaeger.sphere2cube.multithreading.JobExecutor;
+import de.zebrajaeger.sphere2cube.multithreading.MaxJobQueueExecutor;
 import de.zebrajaeger.sphere2cube.packbits.PackBitsDecoderJob;
+import de.zebrajaeger.sphere2cube.progress.Progress;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -10,20 +11,29 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class PSD implements ReadableImage {
-    int width;
-    int height;
-    int channels;
-    int version;
-    ByteBuffer[] lines;
+    private int width;
+    private int height;
+    private int channels;
+    private int version;
+    private ByteBuffer[] lines;
 
     private PSD() {
+    }
+
+    static PSD of(File source, Progress progress) throws IOException, InterruptedException {
+        PSD psd = new PSD();
+        try (ExtendedInputStream fis = new ExtendedInputStream(new BufferedInputStream(new FileInputStream(source), 1024 * 128))) {
+            psd.readHeader(fis);
+            psd.readData(fis, progress);
+        }
+        return psd;
     }
 
     static PSD of(File source) throws IOException, InterruptedException {
         PSD psd = new PSD();
         try (ExtendedInputStream fis = new ExtendedInputStream(new BufferedInputStream(new FileInputStream(source), 1024 * 128))) {
             psd.readHeader(fis);
-            psd.readData(fis);
+            psd.readData(fis, Progress.DUMMY);
         }
         return psd;
     }
@@ -67,17 +77,20 @@ public class PSD implements ReadableImage {
         }
     }
 
-    void readRAWData(ExtendedInputStream dis) throws IOException {
+    void readRAWData(ExtendedInputStream dis, Progress progress) throws IOException {
         System.out.println("read RAW Data");
         int lineCount = height * channels;
         lines = new ByteBuffer[lineCount];
 
-        for (int x = 0; x < lineCount; ++x) {
-            lines[x] = dis.readDirectByteBuffer(width);
+        progress.start(lineCount);
+        for (int i = 0; i < lineCount; ++i) {
+            lines[i] = dis.readDirectByteBuffer(width);
+            progress.update(i);
         }
+        progress.finish();
     }
 
-    void readRLEData(ExtendedInputStream extendedInputStream) throws IOException, InterruptedException {
+    void readRLEData(ExtendedInputStream extendedInputStream, Progress progress) throws IOException, InterruptedException {
         System.out.println("read RLE Data");
         int lineCount = height * channels;
         long[] lineSizes = new long[lineCount];
@@ -91,35 +104,31 @@ public class PSD implements ReadableImage {
             }
         }
 
-        JobExecutor executor = new JobExecutor();
+        progress.start(lineCount);
+        MaxJobQueueExecutor executor = MaxJobQueueExecutor.withMaxQueueSize(50);
         lines = new ByteBuffer[lineCount];
         for (int i = 0; i < lineCount; ++i) {
             ByteBuffer bb = ByteBuffer.allocateDirect(width);
             lines[i] = bb;
             PackBitsDecoderJob job = new PackBitsDecoderJob(i, extendedInputStream.readNewBuffer((int) lineSizes[i]), bb);
             executor.addJob(job);
-            while (executor.getExecutor().getQueue().size() > 100) {
-                Thread.sleep(1);
-            }
-        }
-        while (executor.getExecutor().getActiveCount() > 0) {
-            Thread.sleep(1);
+            progress.update(i);
         }
         executor.shutdown();
+        progress.finish();
     }
 
-    void readData(ExtendedInputStream dis) throws IOException, InterruptedException {
+    void readData(ExtendedInputStream dis, Progress progress) throws IOException, InterruptedException {
         int compression = dis.readU16();
         System.out.println("Compression: " + compression);
         if (compression == 0) {
-            readRAWData(dis);
+            readRAWData(dis, progress);
         } else if (compression == 1) {
-            readRLEData(dis);
+            readRLEData(dis, progress);
         }
     }
 
     void readHeader(ExtendedInputStream dis) throws IOException {
-
         // Header
         System.out.println("Signature: " + dis.readFixedAsciiString(4));
         version = dis.readU16();

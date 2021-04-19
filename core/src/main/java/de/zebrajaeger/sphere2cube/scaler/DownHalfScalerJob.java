@@ -6,7 +6,7 @@ import de.zebrajaeger.sphere2cube.WriteableImage;
 import de.zebrajaeger.sphere2cube.multithreading.Job;
 import net.jafama.FastMath;
 
-public class DownHalfScalerJob implements Job {
+public class DownHalfScalerJob extends Job {
     private final ReadableImage source;
     private final WriteableImage target;
     private final int lineToProcess;
@@ -18,7 +18,7 @@ public class DownHalfScalerJob implements Job {
     }
 
     @Override
-    public void run() {
+    public void exec() {
         Pixel p1 = new Pixel();
         Pixel p2 = new Pixel();
         Pixel p3 = new Pixel();
