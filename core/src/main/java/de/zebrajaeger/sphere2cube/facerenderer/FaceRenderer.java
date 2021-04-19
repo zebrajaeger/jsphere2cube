@@ -61,6 +61,7 @@ public class FaceRenderer {
             default -> throw new RuntimeException("Unknown face:" + face);
         }
 
+        // TODO these 3 lines costs ~70% CPU of this method. Maybe run on GPU?
         double theta = FastMath.atan2(y, x);
         double r = FastMath.hypot(x, y);
         double phi = FastMath.atan2(z, r);
@@ -72,10 +73,12 @@ public class FaceRenderer {
         // Use bilinear interpolation between the four surrounding pixels
         int u1 = (int) FastMath.floor(uf);  // coords of pixel to bottom left
         int v1 = (int) FastMath.floor(vf);
-        int u2 = u1 + 1;       // coords of pixel to top right
-        int v2 = v1 + 1;
         double mu = uf - (float) u1;      // fraction of way across pixel
         double nu = vf - (float) v1;
+        // TODO run on GPU until here?
+
+        int u2 = u1 + 1;       // coords of pixel to top right
+        int v2 = v1 + 1;
 
         int xMax = source.getWidth();
         int yMax = source.getHeight();
