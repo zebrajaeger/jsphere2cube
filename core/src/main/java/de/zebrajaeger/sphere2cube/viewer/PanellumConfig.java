@@ -1,5 +1,7 @@
 package de.zebrajaeger.sphere2cube.viewer;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 public class PanellumConfig implements Viewer.Config {
     private String htmlTitle = "sphere2cube-java with Pannellum";
     private int levelCount;
@@ -105,5 +107,10 @@ public class PanellumConfig implements Viewer.Config {
 
     public void setyMax(double yMax) {
         this.yMax = yMax;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }

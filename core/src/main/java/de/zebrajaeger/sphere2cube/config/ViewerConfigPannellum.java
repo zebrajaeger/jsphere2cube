@@ -1,12 +1,8 @@
 package de.zebrajaeger.sphere2cube.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-import java.io.File;
-
 public class ViewerConfigPannellum {
-
     private boolean enabled = true;
     private String pageTitle = "cube2sphere - pannellum";
     private String target = "index.p.html";

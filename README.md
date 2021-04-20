@@ -5,7 +5,7 @@
 - ~~More differentiated logging~~ 
 - ~~Progress bar~~
 - ~~Timer~~
-- Marzipano viewer  
+- ~~Marzipano viewer~~  
 - read embedded xml of autopano giga
 - self containing application
 - Add css and js from viewers instead link to CDN

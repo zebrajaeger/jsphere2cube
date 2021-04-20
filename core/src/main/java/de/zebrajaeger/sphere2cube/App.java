@@ -13,12 +13,15 @@ import de.zebrajaeger.sphere2cube.progress.Progress;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.tiles.TileSaveJob;
+import de.zebrajaeger.sphere2cube.viewer.Marzipano;
+import de.zebrajaeger.sphere2cube.viewer.MarzipanoConfig;
 import de.zebrajaeger.sphere2cube.viewer.PanellumConfig;
 import de.zebrajaeger.sphere2cube.viewer.Pannellum;
 import de.zebrajaeger.sphere2cube.zip.Zipper;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +103,10 @@ public class App {
         // Viewer
         boolean viewerPannellumEnabled = config.getViewerConfig().getPannellum().isEnabled();
         File viewerPannellumFile = new File(outputFolder, config.getViewerConfig().getPannellum().getTarget());
+        String viewerPannellumTitle = config.getViewerConfig().getPannellum().getPageTitle();
+        boolean viewerMarzipanoEnabled = config.getViewerConfig().getMarzipano().isEnabled();
+        File viewerMarzipanoFile = new File(outputFolder, config.getViewerConfig().getMarzipano().getTarget());
+        String viewerMarzipanoTitle = config.getViewerConfig().getMarzipano().getPageTitle();
 
         // Archive
         boolean archiveEnabled = config.getArchiveConfig().isEnabled();
@@ -265,17 +272,32 @@ public class App {
             }
         }
 
-        // Viewer - pannellum
+        // Viewer - Pannellum
         if (viewerPannellumEnabled) {
-            LOG.info("Render pannellum html: '{}'", viewerPannellumFile.getAbsolutePath());
+            LOG.info("Render Pannellum html: '{}'", viewerPannellumFile.getAbsolutePath());
             PanellumConfig pannellumConfig = new PanellumConfig(panoInfo.getMaxLevelIndex() + 1, panoInfo.getSourceFaceEdge(), tileEdge);
+            if (StringUtils.isNotBlank(viewerPannellumTitle)) {
+                pannellumConfig.setHtmlTitle(viewerPannellumTitle);
+            }
             Pannellum pannellum = new Pannellum();
             String html = pannellum.render(pannellumConfig);
             FileUtils.write(viewerPannellumFile, html, StandardCharsets.UTF_8);
         }
 
-        if(archiveEnabled){
-            Zipper.compress(outputFolder,archiveFile);
+        // Viewer - Marzipano
+        if (viewerMarzipanoEnabled) {
+            LOG.info("Render Marzipano html: '{}'", viewerMarzipanoFile.getAbsolutePath());
+            MarzipanoConfig marzipanoConfig = new MarzipanoConfig(panoInfo);
+            if (StringUtils.isNotBlank(viewerMarzipanoTitle)) {
+                marzipanoConfig.setHtmlTitle(viewerMarzipanoTitle);
+            }
+            Marzipano marzipano = new Marzipano();
+            String html = marzipano.render(marzipanoConfig);
+            FileUtils.write(viewerMarzipanoFile, html, StandardCharsets.UTF_8);
+        }
+
+        if (archiveEnabled) {
+            Zipper.compress(outputFolder, archiveFile);
         }
 
         LOG.info("Completed in {}", appChronograph.stop());

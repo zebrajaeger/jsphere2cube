@@ -14,7 +14,7 @@ public abstract class Viewer {
     }
 
     public Viewer() {
-        template = Mustache.compiler().compile(getTemplate());
+        template = Mustache.compiler().escapeHTML(false).compile(getTemplate());
     }
 
     public abstract String getTemplate();
