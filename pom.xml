@@ -62,7 +62,7 @@
             <id>deployment</id>
             <activation>
                 <property>
-                    <name>!develop</name>
+                    <name>release</name>
                 </property>
             </activation>
             <build>

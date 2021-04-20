@@ -14,7 +14,7 @@
 
 ### MID
 - maven plugin
-- self containing application
+- ~~self containing application~~
 - Populate README
 
 ### LOW
