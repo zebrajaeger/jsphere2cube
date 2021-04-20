@@ -4,6 +4,7 @@ import de.zebrajaeger.sphere2cube.facerenderer.FaceRenderExecutor;
 import de.zebrajaeger.sphere2cube.pano.PanoInfo;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.progress.Progress;
+import de.zebrajaeger.sphere2cube.psd.PSD;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;

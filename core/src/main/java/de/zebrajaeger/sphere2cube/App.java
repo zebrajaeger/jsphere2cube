@@ -1,7 +1,9 @@
 package de.zebrajaeger.sphere2cube;
 
+import com.drew.imaging.ImageProcessingException;
 import de.zebrajaeger.sphere2cube.config.Config;
 import de.zebrajaeger.sphere2cube.facerenderer.FaceRenderExecutor;
+import de.zebrajaeger.sphere2cube.metadata.ViewCalculator;
 import de.zebrajaeger.sphere2cube.multithreading.MaxJobQueueExecutor;
 import de.zebrajaeger.sphere2cube.names.CubeFaceNameGenerator;
 import de.zebrajaeger.sphere2cube.names.TileNameGenerator;
@@ -10,6 +12,7 @@ import de.zebrajaeger.sphere2cube.pano.PanoLevel;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.progress.ConsoleProgressBar;
 import de.zebrajaeger.sphere2cube.progress.Progress;
+import de.zebrajaeger.sphere2cube.psd.PSD;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.tiles.TileSaveJob;
@@ -36,7 +39,7 @@ import java.util.concurrent.ExecutionException;
 public class App {
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
-    public static void main(String[] args) throws IOException, InterruptedException, ParseException, ExecutionException {
+    public static void main(String[] args) throws IOException, InterruptedException, ParseException, ExecutionException, ImageProcessingException {
         Chronograph appChronograph = Chronograph.start();
         Config config;
 
@@ -127,8 +130,13 @@ public class App {
             sourceImage = new Img(inputImageFile);
         }
         LOG.info("Loaded source image in '{}'", chronograph.stop());
-        EquirectangularImage source = EquirectangularImage.of(sourceImage, inputImageHorizontalAngel);
 
+        ViewCalculator viewCalculator = null;
+        if (sourceImage instanceof PSD) {
+            viewCalculator = ViewCalculator.of(inputImageFile, (PSD) sourceImage);
+        }
+
+        EquirectangularImage source = EquirectangularImage.of(sourceImage, inputImageHorizontalAngel);
         PanoInfo panoInfo = PanoUtils.calcPanoInfo(source, tileEdge);
 
         // +===============================================================

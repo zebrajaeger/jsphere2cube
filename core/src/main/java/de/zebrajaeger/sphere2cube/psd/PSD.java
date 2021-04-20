@@ -1,5 +1,9 @@
-package de.zebrajaeger.sphere2cube;
+package de.zebrajaeger.sphere2cube.psd;
 
+import de.zebrajaeger.sphere2cube.DataInputException;
+import de.zebrajaeger.sphere2cube.ExtendedInputStream;
+import de.zebrajaeger.sphere2cube.Pixel;
+import de.zebrajaeger.sphere2cube.ReadableImage;
 import de.zebrajaeger.sphere2cube.multithreading.MaxJobQueueExecutor;
 import de.zebrajaeger.sphere2cube.packbits.PackBitsDecoderJob;
 import de.zebrajaeger.sphere2cube.progress.Progress;
@@ -15,12 +19,13 @@ public class PSD implements ReadableImage {
     private int height;
     private int channels;
     private int version;
+    private ResourceSectionImpl resourceSection;
     private ByteBuffer[] lines;
 
     private PSD() {
     }
 
-    static PSD of(File source, Progress progress) throws IOException, InterruptedException {
+    public static PSD of(File source, Progress progress) throws IOException, InterruptedException {
         PSD psd = new PSD();
         try (ExtendedInputStream fis = new ExtendedInputStream(new BufferedInputStream(new FileInputStream(source), 1024 * 128))) {
             psd.readHeader(fis);
@@ -29,7 +34,7 @@ public class PSD implements ReadableImage {
         return psd;
     }
 
-    static PSD of(File source) throws IOException, InterruptedException {
+    public static PSD of(File source) throws IOException, InterruptedException {
         PSD psd = new PSD();
         try (ExtendedInputStream fis = new ExtendedInputStream(new BufferedInputStream(new FileInputStream(source), 1024 * 128))) {
             psd.readHeader(fis);
@@ -63,6 +68,10 @@ public class PSD implements ReadableImage {
     @Override
     public int getRGB(int x, int y) {
         return ((lines[y].get(x) & 0xff) << 16) + ((lines[y + height].get(x) & 0xff) << 8) + (lines[y + height + height].get(x) & 0xff);
+    }
+
+    public ResourceSectionImpl getResourceSection() {
+        return resourceSection;
     }
 
     public static String toImageSize(long pixelCount) {
@@ -165,7 +174,7 @@ public class PSD implements ReadableImage {
             throw new DataInputException("imageResourceLength too long");
         }
         byte[] imageResources = dis.readNewBuffer((int) imageResourceLength);
-        // TODO parse me
+        resourceSection = new ResourceSectionImpl(imageResources);
 
         // Layer and Mask Information
         long layerAndMaskInformationLength;
