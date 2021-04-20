@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MarzipanoConfig implements Viewer.Config {
+public class MarzipanoConfig extends ViewerConfig {
     private String htmlTitle = "sphere2cube-java with Marzipano";
 
     private String levels;
@@ -86,10 +86,5 @@ public class MarzipanoConfig implements Viewer.Config {
 
     public void setPreviewPath(String previewPath) {
         this.previewPath = previewPath;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
     }
 }

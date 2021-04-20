@@ -2,6 +2,10 @@ package de.zebrajaeger.sphere2cube.viewer;
 
 public class Marzipano extends Viewer {
 
+    public Marzipano() {
+        super();
+    }
+
     /**
      * https://www.marzipano.net/docs.html
      */
@@ -15,8 +19,12 @@ public class Marzipano extends Viewer {
                 <html>
                 <head>
                     <title>{{htmlTitle}}}</title>
-                    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marzipano@0.9.1/dist/marzipano.min.js"></script>
-                    <link rel="stylesheet" href="https://www.marzipano.net/demos/sample-tour/style.css">
+                    {{#js}}
+                    <script type="text/javascript" src="{{.}}"></script>
+                    {{/js}}
+                    {{#css}}
+                    <link rel="stylesheet" href="{{.}}">
+                    {{/css}}
                 </head>
                 <body>
                     <div id="pano" class="pano"></div>
