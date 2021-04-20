@@ -6,8 +6,9 @@
 - ~~Progress bar~~
 - ~~Timer~~
 - Marzipano viewer  
+- read embedded xml of autopano giga
+- self containing application
+- Add css and js from viewers instead link to CDN
 - input image in tiles / dump to HDD
 - output image in tiles / dump to HDD
-- read embedded xml of autopano giga
 - ~~zip file packing (multithreaded)~~
-- self containing application
