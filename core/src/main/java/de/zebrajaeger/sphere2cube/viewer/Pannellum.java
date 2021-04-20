@@ -74,10 +74,10 @@ public class Pannellum extends Viewer {
                                  },
                                  "preview": "{{previewPath}}",
                                  "autoLoad": {{autoLoad}},
-                                 "minYaw": {{xMin}},
-                                 "maxYaw": {{xMax}},
-                                 "minPitch": {{yMin}},
-                                 "maxPitch": {{yMax}},
+                                 "minYaw": {{xmin}},
+                                 "maxYaw": {{xmax}},
+                                 "minPitch": {{ymin}},
+                                 "maxPitch": {{ymax}},
                              }
                              cfg['orientationOnByDefault'] = av;
                              if (!av) {

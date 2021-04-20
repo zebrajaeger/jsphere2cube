@@ -8,8 +8,10 @@ import java.io.File;
 public class InputConfig {
     @JsonProperty("path")
     private File inputImageFile;
-    @JsonProperty("angel")
-    private double inputImageHorizontalAngel = 360d;
+    @JsonProperty("horizontal-angel")
+    private Double inputImageHorizontalAngel;
+    @JsonProperty("vertical-offset")
+    private Double inputImageVerticalOffset;
 
     public File getInputImageFile() {
         return inputImageFile;
@@ -19,11 +21,19 @@ public class InputConfig {
         this.inputImageFile = inputImageFile;
     }
 
-    public double getInputImageHorizontalAngel() {
+    public Double getInputImageHorizontalAngel() {
         return inputImageHorizontalAngel;
     }
 
-    public void setInputImageHorizontalAngel(double inputImageHorizontalAngel) {
+    public Double getInputImageVerticalOffset() {
+        return inputImageVerticalOffset;
+    }
+
+    public void setInputImageVerticalOffset(Double inputImageVerticalOffset) {
+        this.inputImageVerticalOffset = inputImageVerticalOffset;
+    }
+
+    public void setInputImageHorizontalAngel(Double inputImageHorizontalAngel) {
         this.inputImageHorizontalAngel = inputImageHorizontalAngel;
     }
 

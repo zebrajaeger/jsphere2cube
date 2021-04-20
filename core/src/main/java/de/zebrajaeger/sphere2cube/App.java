@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class App {
@@ -79,7 +80,6 @@ public class App {
 
         // Source
         File inputImageFile = config.getInputConfig().getInputImageFile();
-        double inputImageHorizontalAngel = config.getInputConfig().getInputImageHorizontalAngel();
 
         File outputFolder = config.getOutputFolder();
 
@@ -131,12 +131,37 @@ public class App {
         }
         LOG.info("Loaded source image in '{}'", chronograph.stop());
 
-        ViewCalculator viewCalculator = null;
-        if (sourceImage instanceof PSD) {
-            viewCalculator = ViewCalculator.of(inputImageFile, (PSD) sourceImage);
+
+        // View vor viewer
+        Optional<ViewCalculator> viewCalculator = Optional.empty();
+        if (config.getViewerConfig().isEnabled()) {
+            if (sourceImage instanceof PSD) {
+                try {
+                    viewCalculator = Optional.of(ViewCalculator.of(inputImageFile, (PSD) sourceImage));
+                } catch (Throwable t) {
+                    LOG.error("Could not calculate view", t);
+                }
+            }
         }
 
-        EquirectangularImage source = EquirectangularImage.of(sourceImage, inputImageHorizontalAngel);
+        double inputImageHorizontalAngel = 360;
+        double inputImageVerticalOffset = 0;
+
+        // take angel from metadata if available
+        if (viewCalculator.isPresent()) {
+            LOG.info(viewCalculator.get().toString());
+            inputImageHorizontalAngel = viewCalculator.get().getFovX();
+            inputImageVerticalOffset = viewCalculator.get().getFovYOffset();
+        }
+
+        // overwrite manual if present
+        if (config.getInputConfig().getInputImageHorizontalAngel() != null && config.getInputConfig().getInputImageHorizontalAngel() > 0) {
+            inputImageHorizontalAngel = config.getInputConfig().getInputImageHorizontalAngel();
+            inputImageVerticalOffset = config.getInputConfig().getInputImageVerticalOffset();
+        }
+
+        // create equirectangular source image
+        EquirectangularImage source = EquirectangularImage.of(sourceImage, inputImageHorizontalAngel, inputImageVerticalOffset);
         PanoInfo panoInfo = PanoUtils.calcPanoInfo(source, tileEdge);
 
         // +===============================================================
@@ -302,6 +327,15 @@ public class App {
                 pannellumConfig.getJsFiles().addAll(ViewerUtils.download(jsFiles, outputFolder));
             }
 
+            viewCalculator.ifPresent(vc -> {
+                vc.createPanoView().ifPresent(pv -> {
+                    pannellumConfig.setXMin(pv.getFovX1());
+                    pannellumConfig.setXMax(pv.getFovX2());
+                    pannellumConfig.setYMin(pv.getFovY1Inv());
+                    pannellumConfig.setYMax(pv.getFovY2Inv());
+                });
+            });
+
             Pannellum pannellum = new Pannellum();
             String html = pannellum.render(pannellumConfig);
             FileUtils.write(viewerPannellumFile, html, StandardCharsets.UTF_8);
@@ -338,6 +372,7 @@ public class App {
             FileUtils.write(viewerMarzipanoFile, html, StandardCharsets.UTF_8);
         }
 
+        // Archive
         if (archiveEnabled) {
             Zipper.compress(outputFolder, archiveFile);
         }

@@ -75,35 +75,35 @@ public class PanellumConfig extends ViewerConfig {
         this.autoLoad = autoLoad;
     }
 
-    public double getxMin() {
+    public double getXMin() {
         return xMin;
     }
 
-    public void setxMin(double xMin) {
+    public void setXMin(double xMin) {
         this.xMin = xMin;
     }
 
-    public double getxMax() {
+    public double getXMax() {
         return xMax;
     }
 
-    public void setxMax(double xMax) {
+    public void setXMax(double xMax) {
         this.xMax = xMax;
     }
 
-    public double getyMin() {
+    public double getYMin() {
         return yMin;
     }
 
-    public void setyMin(double yMin) {
+    public void setYMin(double yMin) {
         this.yMin = yMin;
     }
 
-    public double getyMax() {
+    public double getYMax() {
         return yMax;
     }
 
-    public void setyMax(double yMax) {
+    public void setYMax(double yMax) {
         this.yMax = yMax;
     }
 }

@@ -12,6 +12,19 @@ public class EquirectangularImage implements ReadableImage {
     private final int insideY2;
 
 
+    static EquirectangularImage of(ReadableImage embeddedImage, double embeddedWidthAngel, double verticalOffset) {
+        int fullWidth = (int) (360d * embeddedImage.getWidth() / embeddedWidthAngel);
+        int fullHeight = fullWidth / 2;
+
+        int shiftY = (int) (fullHeight * verticalOffset / 180d);
+
+        int offX = (fullWidth - embeddedImage.getWidth()) / 2;
+        int offY = ((fullHeight - embeddedImage.getHeight()) / 2) + shiftY;
+
+        return new EquirectangularImage(fullWidth, embeddedImage, offX, offY);
+    }
+
+    @Deprecated
     static EquirectangularImage of(ReadableImage embeddedImage, double embeddedWidthAngel) {
         int fullWidth = (int) (360d * embeddedImage.getWidth() / embeddedWidthAngel);
         int fullHeight = fullWidth / 2;

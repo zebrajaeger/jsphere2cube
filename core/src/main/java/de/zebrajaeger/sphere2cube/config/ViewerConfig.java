@@ -24,6 +24,10 @@ public class ViewerConfig {
         this.marzipano = marzipano;
     }
 
+    public boolean isEnabled() {
+        return pannellum.isEnabled() || marzipano.isEnabled();
+    }
+
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
