@@ -7,8 +7,8 @@
 - ~~Progress bar~~
 - ~~Timer~~
 - ~~Marzipano viewer~~  
-- read embedded xml of autopano giga
-- restrict view angle dependent from source image bounds
+- ~~read embedded xml of autopano giga~~
+- ~~restrict view angle dependent from source image bounds~~
 - ~~Add css and js from viewers instead link to CDN~~
 - ~~zip file packing (multithreaded)~~
 
