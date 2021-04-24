@@ -18,7 +18,7 @@ public class MarzipanoConfig extends ViewerConfig {
     private String tileFileType = "png";
     private String previewPath = "preview_scaled.jpg";
 
-    class Level {
+    static class Level {
         @JsonProperty
         private final int tileSize;
         @JsonProperty

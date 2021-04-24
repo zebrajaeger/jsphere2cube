@@ -142,7 +142,10 @@ public class PSD implements ReadableImage {
         System.out.println("Signature: " + dis.readFixedAsciiString(4));
         version = dis.readU16();
         System.out.println("Version: " + version);
-        dis.skip(6);
+
+        if (dis.skip(6) != 6) {
+            throw new IOException("skip does not skip 6 Bytes");
+        }
         channels = dis.readU16();
         System.out.println("Channels: " + channels);
         long h = dis.readU32();
@@ -165,7 +168,9 @@ public class PSD implements ReadableImage {
         // Color Mode Data
         long colorModeLength = dis.readU32();
         System.out.println("Color Mode Data length: " + colorModeLength);
-        dis.skip(colorModeLength);
+        if (dis.skip(colorModeLength) != colorModeLength) {
+            throw new IOException(String.format("skip does not skip %d Bytes", colorModeLength));
+        }
 
         // Image Resources
         long imageResourceLength = dis.readU32();
@@ -184,6 +189,8 @@ public class PSD implements ReadableImage {
             layerAndMaskInformationLength = dis.readU64();
         }
         System.out.println("Layer and Mask Information length: " + layerAndMaskInformationLength);
-        dis.skip(layerAndMaskInformationLength);
+        if (dis.skip(layerAndMaskInformationLength) != layerAndMaskInformationLength) {
+            throw new IOException(String.format("skip does not skip %d Bytes", layerAndMaskInformationLength));
+        }
     }
 }

@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.List;
 
 public class PanoInfo {
-    private List<PanoLevel> levels;
+    private final List<PanoLevel> levels;
     private final int maxLevelIndex;
     private final int tileEdge;
 

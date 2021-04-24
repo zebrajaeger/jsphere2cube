@@ -8,8 +8,8 @@ import java.time.temporal.ChronoUnit;
 
 public class ConsoleProgressBar implements Progress {
     private ProgressBar progressBar;
-    private String title;
-    private int updateIntervalMs = 200;
+    private final String title;
+    private final int updateIntervalMs = 200;
 
     public static ConsoleProgressBar of(String title) {
         return new ConsoleProgressBar(title);

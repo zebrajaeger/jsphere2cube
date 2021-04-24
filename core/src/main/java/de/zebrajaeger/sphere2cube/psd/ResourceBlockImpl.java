@@ -39,7 +39,7 @@ import java.nio.charset.StandardCharsets;
  * @author Lars Brandt on 08.05.2016.
  */
 public class ResourceBlockImpl implements ResourceBlock {
-    private static Logger LOG = LoggerFactory.getLogger(ResourceBlockImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceBlockImpl.class);
 
     private transient byte[] signature = {'8', 'B', 'I', 'M'};
     private int uid;
@@ -75,7 +75,7 @@ public class ResourceBlockImpl implements ResourceBlock {
     protected void decodeData() {
         if (uid == 1058) {
             // EXIF
-            // decodedData = new String(data, StandardCharsets.US_ASCII);
+             decodedData = new String(data, StandardCharsets.US_ASCII);
         } else if (uid == 1060) {
             // XMP see http://www.w3.org/RDF/Validator/
             decodedData = new String(data, StandardCharsets.US_ASCII);
@@ -89,5 +89,21 @@ public class ResourceBlockImpl implements ResourceBlock {
 
     public Object getDecodedData() {
         return decodedData;
+    }
+
+    public byte[] getSignature() {
+        return signature;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public PascalString getName() {
+        return name;
+    }
+
+    public long getSize() {
+        return size;
     }
 }

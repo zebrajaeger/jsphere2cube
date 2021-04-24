@@ -27,7 +27,9 @@ public class Zipper {
         int srcFolderLength = sourceFolder.getAbsolutePath().length() + 1;  // +1 to remove the last file separator
 
         if (zipFile.exists()) {
-            zipFile.delete();
+            if (zipFile.delete()) {
+                LOG.info("Old zip file '{}' deleted'", zipFile.getAbsolutePath());
+            }
         }
 
         try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(new FileOutputStream(zipFile))) {
