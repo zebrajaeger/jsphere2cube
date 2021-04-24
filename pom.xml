@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.zebrajaeger</groupId>
-    <artifactId>sphere2cube-java-root</artifactId>
+    <artifactId>jsphere2cube-root</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 

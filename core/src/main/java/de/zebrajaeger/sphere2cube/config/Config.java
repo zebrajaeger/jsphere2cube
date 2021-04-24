@@ -5,12 +5,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.loader.SchemaLoader;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class Config {
     private boolean debug;
@@ -34,7 +48,19 @@ public class Config {
         formatter.printHelp("\n  sphere2cube <nothing> | <config-file> | <options>  \nOptions:", createOptions());
     }
 
+    public static void validate(File file) throws IOException {
+        validate(FileUtils.readFileToString(file, StandardCharsets.UTF_8));
+    }
+
+    public static void validate(String jsonString) {
+        InputStream schemaIs = Objects.requireNonNull(Config.class.getResourceAsStream("sphere2cube.schema.json"), "Schema not found");
+        JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaIs));
+        Schema schema = SchemaLoader.load(jsonSchema);
+        schema.validate(new JSONObject(new JSONTokener(IOUtils.toInputStream(jsonString, StandardCharsets.UTF_8))));
+    }
+
     public static Config of(File configFile) throws IOException {
+        validate(configFile);
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(configFile, Config.class);
     }

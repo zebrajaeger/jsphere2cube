@@ -1,0 +1,240 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "debug": {
+      "type": "boolean"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ]
+    },
+    "target": {
+      "type": "string"
+    },
+    "preview": {
+      "type": "object",
+      "properties": {
+        "cubemap": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "edge": {
+              "type": "integer"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "edge",
+            "target"
+          ]
+        },
+        "equirectangular": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "edge": {
+              "type": "integer"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "edge",
+            "target"
+          ]
+        },
+        "scaled": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "edge": {
+              "type": "integer"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "edge",
+            "target"
+          ]
+        }
+      },
+      "required": [
+        "cubemap",
+        "equirectangular",
+        "scaled"
+      ]
+    },
+    "cubemap": {
+      "type": "object",
+      "properties": {
+        "tiles": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "tileEdge": {
+              "type": "integer"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "tileEdge",
+            "target"
+          ]
+        },
+        "faces": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "target"
+          ]
+        }
+      },
+      "required": [
+        "tiles",
+        "faces"
+      ]
+    },
+    "viewer": {
+      "type": "object",
+      "properties": {
+        "pannellum": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "title": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "js": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "css": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "required": [
+            "enabled",
+            "title",
+            "target",
+            "js",
+            "css"
+          ]
+        },
+        "marzipano": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "title": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "js": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "css": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "required": [
+            "enabled",
+            "title",
+            "target",
+            "js",
+            "css"
+          ]
+        }
+      },
+      "required": [
+        "pannellum",
+        "marzipano"
+      ]
+    },
+    "archive": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled",
+        "target"
+      ]
+    }
+  },
+  "required": [
+    "debug",
+    "source",
+    "target",
+    "preview",
+    "cubemap",
+    "viewer",
+    "archive"
+  ]
+}

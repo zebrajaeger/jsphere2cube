@@ -1,0 +1,63 @@
+{
+  "debug": "Narf",
+  "source": {
+    "path": "/home/l/prj/panos/IMG_1766_S(168.00x25.63(8.99)).psb"
+  },
+  "target": "./temp",
+  "preview": {
+    "cubemap": {
+      "enabled": true,
+      "edge": 200,
+      "target": "preview_cube.jpg"
+    },
+    "equirectangular": {
+      "enabled": true,
+      "edge": 800,
+      "target": "preview_equirectangular.jpg"
+    },
+    "scaled": {
+      "enabled": true,
+      "edge": 800,
+      "target": "preview_scaled.jpg"
+    }
+  },
+  "cubemap": {
+    "tiles": {
+      "enabled": false,
+      "tileEdge": 512,
+      "target": "{{levelCount}}/{{faceNameShortLowerCase}}{{xIndex}}_{{yIndex}}.png"
+    },
+    "faces": {
+      "enabled": false,
+      "target": "{{faceNameLowerCase}}_{{levelCount}}.png"
+    }
+  },
+  "viewer": {
+    "pannellum": {
+      "enabled": true,
+      "title": "cube2sphere - Pannellum",
+      "target": "index.p.html",
+      "js": [
+        "https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"
+      ],
+      "css": [
+        "https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"
+      ]
+    },
+    "marzipano": {
+      "enabled": true,
+      "title": "cube2sphere - Marzipano",
+      "target": "index.m.html",
+      "js": [
+        "https://cdn.jsdelivr.net/npm/marzipano@0.9.1/dist/marzipano.min.js"
+      ],
+      "css": [
+        "https://www.marzipano.net/demos/sample-tour/style.css"
+      ]
+    }
+  },
+  "archive": {
+    "enabled": false,
+    "target": "pano.zip"
+  }
+}
