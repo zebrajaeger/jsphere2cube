@@ -8,6 +8,7 @@
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
+
     <description>???</description>
     <url>https://github.com/zebrajaeger/sphere2cube-java</url>
     <scm>
