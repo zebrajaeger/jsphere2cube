@@ -2,9 +2,11 @@ package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import de.zebrajaeger.sphere2cube.Stringable;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -26,7 +28,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-public class Config {
+public class Config extends Stringable {
     private boolean debug;
     @JsonIgnore
     private SaveConfig saveConfig = new SaveConfig();
@@ -62,7 +64,11 @@ public class Config {
     public static Config of(File configFile) throws IOException {
         validate(configFile);
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(configFile, Config.class);
+        try {
+            return mapper.readValue(configFile, Config.class);
+        } catch (JacksonException e) {
+            throw new IOException(String.format("Failed to read config '%s'", configFile.getAbsolutePath()),e);
+        }
     }
 
     public static Config of(String[] args) throws ParseException, IOException {
@@ -226,10 +232,6 @@ public class Config {
         return ow.writeValueAsString(this);
     }
 
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
 
     public boolean isDebug() {
         return debug;

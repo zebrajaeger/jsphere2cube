@@ -1,14 +1,13 @@
 package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import de.zebrajaeger.sphere2cube.Stringable;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewerConfigBase {
+public class ViewerConfigBase extends Stringable {
     @JsonProperty
     private boolean enabled = true;
     @JsonProperty("title")
@@ -63,11 +62,6 @@ public class ViewerConfigBase {
 
     public void setJsFiles(List<URL> jsFiles) {
         this.jsFiles = jsFiles;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
 }

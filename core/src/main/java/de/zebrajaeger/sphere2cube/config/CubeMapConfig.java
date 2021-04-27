@@ -1,11 +1,12 @@
 package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.zebrajaeger.sphere2cube.Stringable;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.io.File;
 
-public class CubeMapConfig {
+public class CubeMapConfig extends Stringable {
     @JsonProperty("tiles")
     private CubeMapTilesConfig tiles = new CubeMapTilesConfig();
     @JsonProperty("faces")
@@ -27,8 +28,4 @@ public class CubeMapConfig {
         this.faces = faces;
     }
 
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
 }

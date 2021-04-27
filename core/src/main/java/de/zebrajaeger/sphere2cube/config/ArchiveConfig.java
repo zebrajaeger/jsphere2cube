@@ -1,8 +1,9 @@
 package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.zebrajaeger.sphere2cube.Stringable;
 
-public class ArchiveConfig {
+public class ArchiveConfig extends Stringable {
     @JsonProperty
     private boolean enabled = true;
     @JsonProperty

@@ -1,11 +1,12 @@
 package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.zebrajaeger.sphere2cube.Stringable;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.io.File;
 
-public class InputConfig {
+public class InputConfig extends Stringable {
     @JsonProperty("path")
     private File inputImageFile;
     @JsonProperty("horizontal-angel")
@@ -37,8 +38,4 @@ public class InputConfig {
         this.inputImageHorizontalAngel = inputImageHorizontalAngel;
     }
 
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
 }

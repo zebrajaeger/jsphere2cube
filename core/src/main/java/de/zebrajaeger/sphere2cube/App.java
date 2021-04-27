@@ -13,6 +13,8 @@ import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.progress.ConsoleProgressBar;
 import de.zebrajaeger.sphere2cube.progress.Progress;
 import de.zebrajaeger.sphere2cube.psd.PSD;
+import de.zebrajaeger.sphere2cube.runconfig.PanoDirectory;
+import de.zebrajaeger.sphere2cube.runconfig.PanoSearcher;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.tiles.TileSaveJob;
@@ -41,7 +43,6 @@ public class App {
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) throws IOException, InterruptedException, ParseException, ExecutionException, ImageProcessingException {
-        Chronograph appChronograph = Chronograph.start();
         Config config;
 
         if (args.length == 0) {
@@ -60,7 +61,14 @@ public class App {
                 System.exit(-1);
                 return;
             } else {
-                config = Config.of(src);
+                if (src.isFile()) {
+                    config = Config.of(src);
+                } else if (src.isDirectory()) {
+                    renderAll(src);
+                    return;
+                } else {
+                    return;
+                }
             }
         } else {
             config = Config.of(args);
@@ -72,6 +80,18 @@ public class App {
             FileUtils.write(t, config.toJson(), StandardCharsets.UTF_8);
         }
 
+        renderPano(config);
+    }
+
+    private static void renderAll(File root) throws IOException {
+        List<PanoDirectory> panoDirectories = PanoSearcher.scanRecursive(root);
+        for(PanoDirectory p : panoDirectories){
+            System.out.println(p);
+        }
+    }
+
+    private static void renderPano(Config config) throws IOException, InterruptedException, ExecutionException {
+        Chronograph appChronograph = Chronograph.start();
         // +===============================================================
         // | Options
         // +===============================================================

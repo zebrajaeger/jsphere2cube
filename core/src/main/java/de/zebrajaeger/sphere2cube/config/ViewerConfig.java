@@ -1,9 +1,9 @@
 package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import de.zebrajaeger.sphere2cube.Stringable;
 
-public class ViewerConfig {
+public class ViewerConfig extends Stringable {
     @JsonProperty("pannellum")
     private ViewerConfigPannellum pannellum = new ViewerConfigPannellum();
     private ViewerConfigMarzipano marzipano = new ViewerConfigMarzipano();
@@ -28,8 +28,4 @@ public class ViewerConfig {
         return pannellum.isEnabled() || marzipano.isEnabled();
     }
 
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
 }

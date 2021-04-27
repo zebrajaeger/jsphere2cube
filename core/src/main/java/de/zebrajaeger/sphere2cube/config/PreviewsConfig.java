@@ -1,9 +1,10 @@
 package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.zebrajaeger.sphere2cube.Stringable;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-public class PreviewsConfig {
+public class PreviewsConfig extends Stringable {
     @JsonProperty("cubemap")
     private PreviewConfig cubeMapPreview = new PreviewConfig(true, 200, "preview_cube.jpg");
     @JsonProperty("equirectangular")
@@ -35,8 +36,4 @@ public class PreviewsConfig {
         this.scaledPreview = scaledPreview;
     }
 
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
 }
