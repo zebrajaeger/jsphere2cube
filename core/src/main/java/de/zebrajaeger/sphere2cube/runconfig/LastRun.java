@@ -1,27 +1,22 @@
 package de.zebrajaeger.sphere2cube.runconfig;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.zebrajaeger.sphere2cube.PanoProcessState;
 import de.zebrajaeger.sphere2cube.Stringable;
-import de.zebrajaeger.sphere2cube.TimeUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 public class LastRun extends Stringable {
     @JsonProperty
     private String configHash;
     @JsonProperty
-    private Long timestamp;
-    @JsonProperty
-    private String result;
-    @JsonProperty
-    private Long runtimeMs;
+    private PanoProcessState lastRun;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public String getHumanTime() {
-        return TimeUtils.toIsoTime(timestamp);
-    }
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public String getHumanRunTime() {
-        return TimeUtils.durationToHumanString(runtimeMs);
+    public static RunConfig of(File configFile) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(configFile, RunConfig.class);
     }
 
     public String getConfigHash() {
@@ -32,27 +27,11 @@ public class LastRun extends Stringable {
         this.configHash = configHash;
     }
 
-    public Long getTimestamp() {
-        return timestamp;
+    public PanoProcessState getLastRun() {
+        return lastRun;
     }
 
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public Long getRuntimeMs() {
-        return runtimeMs;
-    }
-
-    public void setRuntimeMs(Long runtimeMs) {
-        this.runtimeMs = runtimeMs;
+    public void setLastRun(PanoProcessState lastRun) {
+        this.lastRun = lastRun;
     }
 }

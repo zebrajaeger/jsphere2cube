@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.security.DigestException;
 import java.security.MessageDigest;
 
-public class FileUtils {
+public class HashUtils {
     public static String hashFile(@NotNull File f) throws IOException {
         MessageDigest digest = DigestUtils.getSha3_256Digest();
         try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(f))) {

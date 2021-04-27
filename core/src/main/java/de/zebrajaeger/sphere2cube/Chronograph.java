@@ -16,8 +16,14 @@ public class Chronograph {
 
     public String stop() {
         stopWatch.stop();
-        return TimeUtils.durationToHumanString(stopWatch.getTime());
+        return getDurationForHuman();
     }
 
+    public long getDurationMs() {
+        return stopWatch.getTime();
+    }
 
+    public String getDurationForHuman() {
+        return TimeUtils.durationToHumanString(stopWatch.getTime());
+    }
 }

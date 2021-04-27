@@ -27,7 +27,7 @@ public class SchemaTest {
     public void test1() {
         String config = loadResourceAsString("config.2.json");
         Exception exception = assertThrows(ValidationException.class, () -> {
-            Config.validate(config);
+            JsonUtils.validate(config, Config.SPHERE_2_CUBE_SCHEMA_JSON);
         });
 
         assertTrue(exception.getMessage().equals("#/debug: expected type: Boolean, found: String"));

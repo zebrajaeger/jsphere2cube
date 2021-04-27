@@ -61,4 +61,24 @@ public class PanoDirectory extends Stringable {
         }
         return false;
     }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public File getConfigFile() {
+        return configFile;
+    }
+
+    public String getConfigHash() {
+        return configHash;
+    }
+
+    public RunConfig getRunConfig() {
+        return runConfig;
+    }
+
+    public File getRunConfigFile() {
+        return runConfigFile;
+    }
 }

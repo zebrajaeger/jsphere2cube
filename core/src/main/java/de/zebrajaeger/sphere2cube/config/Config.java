@@ -2,10 +2,7 @@ package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import de.zebrajaeger.sphere2cube.JsonUtils;
 import de.zebrajaeger.sphere2cube.Stringable;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -13,23 +10,17 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 public class Config extends Stringable {
+    public static final String SPHERE_2_CUBE_SCHEMA_JSON = "sphere2cube.schema.json";
+
     private boolean debug;
+    @JsonIgnore
+    private File configFile = null;
     @JsonIgnore
     private SaveConfig saveConfig = new SaveConfig();
     @JsonProperty("source")
@@ -50,25 +41,8 @@ public class Config extends Stringable {
         formatter.printHelp("\n  sphere2cube <nothing> | <config-file> | <options>  \nOptions:", createOptions());
     }
 
-    public static void validate(File file) throws IOException {
-        validate(FileUtils.readFileToString(file, StandardCharsets.UTF_8));
-    }
-
-    public static void validate(String jsonString) {
-        InputStream schemaIs = Objects.requireNonNull(Config.class.getResourceAsStream("sphere2cube.schema.json"), "Schema not found");
-        JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaIs));
-        Schema schema = SchemaLoader.load(jsonSchema);
-        schema.validate(new JSONObject(new JSONTokener(IOUtils.toInputStream(jsonString, StandardCharsets.UTF_8))));
-    }
-
     public static Config of(File configFile) throws IOException {
-        validate(configFile);
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(configFile, Config.class);
-        } catch (JacksonException e) {
-            throw new IOException(String.format("Failed to read config '%s'", configFile.getAbsolutePath()),e);
-        }
+        return JsonUtils.loadJson(configFile, Config.class, SPHERE_2_CUBE_SCHEMA_JSON);
     }
 
     public static Config of(String[] args) throws ParseException, IOException {
@@ -226,12 +200,6 @@ public class Config extends Stringable {
 
         return options;
     }
-
-    public String toJson() throws JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        return ow.writeValueAsString(this);
-    }
-
 
     public boolean isDebug() {
         return debug;

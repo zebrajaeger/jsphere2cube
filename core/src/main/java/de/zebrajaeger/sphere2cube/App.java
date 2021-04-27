@@ -1,6 +1,5 @@
 package de.zebrajaeger.sphere2cube;
 
-import com.drew.imaging.ImageProcessingException;
 import de.zebrajaeger.sphere2cube.config.Config;
 import de.zebrajaeger.sphere2cube.facerenderer.FaceRenderExecutor;
 import de.zebrajaeger.sphere2cube.metadata.ViewCalculator;
@@ -13,6 +12,7 @@ import de.zebrajaeger.sphere2cube.pano.PanoUtils;
 import de.zebrajaeger.sphere2cube.progress.ConsoleProgressBar;
 import de.zebrajaeger.sphere2cube.progress.Progress;
 import de.zebrajaeger.sphere2cube.psd.PSD;
+import de.zebrajaeger.sphere2cube.runconfig.LastRun;
 import de.zebrajaeger.sphere2cube.runconfig.PanoDirectory;
 import de.zebrajaeger.sphere2cube.runconfig.PanoSearcher;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
@@ -41,17 +41,22 @@ import java.util.concurrent.ExecutionException;
 
 public class App {
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
+    public static final String DEFAULT_CONFIG_FILE_NAME = "sphere2cube.json";
+    public static final String DEFAULT_LAST_RUN_CONFIG_FOLDER_NAME = ".sphere2cube";
+    public static final String DEFAULT_LAST_RUN_CONFIG_FILE_NAME = "last-run.json";
 
-    public static void main(String[] args) throws IOException, InterruptedException, ParseException, ExecutionException, ImageProcessingException {
+    public static void main(String[] args) throws IOException, InterruptedException, ParseException, ExecutionException {
         Config config;
+        File srcConfigFile = null;
 
         if (args.length == 0) {
-            File src = new File("sphere2cube.json");
+            File src = new File(DEFAULT_CONFIG_FILE_NAME);
             if (!src.exists()) {
                 Config.help();
                 System.exit(-1);
                 return;
             } else {
+                srcConfigFile = src;
                 config = Config.of(src);
             }
         } else if (args.length == 1) {
@@ -62,6 +67,7 @@ public class App {
                 return;
             } else {
                 if (src.isFile()) {
+                    srcConfigFile = src;
                     config = Config.of(src);
                 } else if (src.isDirectory()) {
                     renderAll(src);
@@ -77,21 +83,48 @@ public class App {
         if (config.getSaveConfig().isSaveConfig()) {
             File t = new File(config.getSaveConfig().getSaveConfigTarget());
             FileUtils.forceMkdirParent(t);
-            FileUtils.write(t, config.toJson(), StandardCharsets.UTF_8);
+            JsonUtils.saveJson(t, config);
         }
 
-        renderPano(config);
+        PanoProcessState panoProcessState = renderPano(config);
+
+        File outputFolder = config.getOutputFolder();
+        if (outputFolder.exists()) {
+            LastRun lastRun = new LastRun();
+            lastRun.setLastRun(panoProcessState);
+            if (srcConfigFile != null) {
+                lastRun.setConfigHash(HashUtils.hashFile(srcConfigFile));
+            } else {
+                File configFile = new File(outputFolder, DEFAULT_CONFIG_FILE_NAME);
+                if (configFile.exists()) {
+                    lastRun.setConfigHash(HashUtils.hashFile(configFile));
+                }
+            }
+            File lastRunFile = new File(new File(outputFolder, DEFAULT_LAST_RUN_CONFIG_FOLDER_NAME), DEFAULT_LAST_RUN_CONFIG_FILE_NAME);
+            FileUtils.forceMkdirParent(lastRunFile);
+            JsonUtils.saveJson(lastRunFile, lastRun);
+        }
+
+        System.out.println(JsonUtils.toJson(panoProcessState));
     }
 
-    private static void renderAll(File root) throws IOException {
+    /**
+     * everything in directory (recursive)
+     */
+    private static void renderAll(File root) throws IOException, ExecutionException, InterruptedException {
         List<PanoDirectory> panoDirectories = PanoSearcher.scanRecursive(root);
-        for(PanoDirectory p : panoDirectories){
-            System.out.println(p);
+        for (PanoDirectory p : panoDirectories) {
+            renderPano(p.getConfig());
         }
     }
 
-    private static void renderPano(Config config) throws IOException, InterruptedException, ExecutionException {
+    /**
+     * one single pano
+     */
+    private static PanoProcessState renderPano(Config config) throws IOException, InterruptedException, ExecutionException {
         Chronograph appChronograph = Chronograph.start();
+        PanoProcessState result = new PanoProcessState(config.getOutputFolder());
+
         // +===============================================================
         // | Options
         // +===============================================================
@@ -150,9 +183,13 @@ public class App {
             sourceImage = new Img(inputImageFile);
         }
         LOG.info("Loaded source image in '{}'", chronograph.stop());
+        result.addStep(PanoProcessState.Step
+                .of(PanoProcessState.StepType.READ_SOURCE_IMAGE)
+                .with(PanoProcessState.ValueType.FILE, inputImageFile)
+                .with(PanoProcessState.ValueType.DURATION_MS, chronograph.getDurationMs())
+                .with(PanoProcessState.ValueType.DURATION_HUMAN, chronograph.getDurationForHuman()));
 
-
-        // View vor viewer
+        // View for viewer
         Optional<ViewCalculator> viewCalculator = Optional.empty();
         if (config.getViewerConfig().isEnabled()) {
             if (sourceImage instanceof PSD) {
@@ -163,6 +200,9 @@ public class App {
                 }
             }
         }
+        result.addStep(PanoProcessState.Step
+                .of(PanoProcessState.StepType.CALCULATE_VIEW)
+                .with(PanoProcessState.ValueType.VIEW_CALCULATOR, viewCalculator.orElse(null)));
 
         double inputImageHorizontalAngel = 360;
         double inputImageVerticalOffset = 0;
@@ -203,6 +243,11 @@ public class App {
             previewChronograph = Chronograph.start();
             ImgUtils.save(cubeMapImage, previewCubeTarget, 0.85f);
             LOG.info("Saved preview cube in: '{}'", previewChronograph.stop());
+            result.addStep(PanoProcessState.Step
+                    .of(PanoProcessState.StepType.PREVIEW_CUBIC)
+                    .with(PanoProcessState.ValueType.FILE, previewCubeTarget)
+                    .with(PanoProcessState.ValueType.DURATION_MS, previewChronograph.getDurationMs())
+                    .with(PanoProcessState.ValueType.DURATION_HUMAN, previewChronograph.getDurationForHuman()));
         }
 
         // generate Equirectangular preview
@@ -217,6 +262,11 @@ public class App {
             previewChronograph = Chronograph.start();
             ImgUtils.save(scaled, previewEquirectangularTarget, 0.85f);
             LOG.info("Saved preview equirectangular in: '{}'", previewChronograph.stop());
+            result.addStep(PanoProcessState.Step
+                    .of(PanoProcessState.StepType.PREVIEW_EQUIRECTANGULAR)
+                    .with(PanoProcessState.ValueType.FILE, previewEquirectangularTarget)
+                    .with(PanoProcessState.ValueType.DURATION_MS, previewChronograph.getDurationMs())
+                    .with(PanoProcessState.ValueType.DURATION_HUMAN, previewChronograph.getDurationForHuman()));
         }
 
         // generate scaled original preview
@@ -238,6 +288,12 @@ public class App {
             previewChronograph = Chronograph.start();
             ImgUtils.save(scaled, previewScaledOriginalTarget, 0.85f);
             LOG.info("Saved preview scaled in: '{}'", previewChronograph.stop());
+
+            result.addStep(PanoProcessState.Step
+                    .of(PanoProcessState.StepType.PREVIEW_SCALED)
+                    .with(PanoProcessState.ValueType.FILE, previewScaledOriginalTarget)
+                    .with(PanoProcessState.ValueType.DURATION_MS, previewChronograph.getDurationMs())
+                    .with(PanoProcessState.ValueType.DURATION_HUMAN, previewChronograph.getDurationForHuman()));
         }
 
         // cube map faces
@@ -259,6 +315,11 @@ public class App {
                 Chronograph faceRenderChronograph = Chronograph.start();
                 FaceRenderExecutor.renderFace(source, cubeFace, face, ConsoleProgressBar.of(String.format("Render %s", face)));
                 LOG.info("Render face in '{}'", faceRenderChronograph.stop());
+                result.addStep(PanoProcessState.Step
+                        .of(PanoProcessState.StepType.FACE)
+                        .with(PanoProcessState.ValueType.FACE, face)
+                        .with(PanoProcessState.ValueType.DURATION_MS, faceRenderChronograph.getDurationMs())
+                        .with(PanoProcessState.ValueType.DURATION_HUMAN, faceRenderChronograph.getDurationForHuman()));
                 if (debug) {
                     ImgUtils.drawBorder(cubeFace, face.getColor());
                 }
@@ -276,6 +337,13 @@ public class App {
                             FileUtils.forceMkdirParent(faceFile);
                             ImgUtils.save(scaledCubeFace, faceFile, null);
                             LOG.info("Save cube face in '{}'", cubeFaceSaveChronograph.stop());
+                            result.addStep(PanoProcessState.Step
+                                    .of(PanoProcessState.StepType.SAVE_FACE)
+                                    .with(PanoProcessState.ValueType.FILE, faceFile)
+                                    .with(PanoProcessState.ValueType.LEVEL_INDEX, levelIndex)
+                                    .with(PanoProcessState.ValueType.FACE, face)
+                                    .with(PanoProcessState.ValueType.DURATION_MS, cubeFaceSaveChronograph.getDurationMs())
+                                    .with(PanoProcessState.ValueType.DURATION_HUMAN, cubeFaceSaveChronograph.getDurationForHuman()));
                         }
 
                         // render tiles for face and level
@@ -304,6 +372,12 @@ public class App {
                         tileExecutor.shutdown();
                         tileProgressBar.finish();
                         LOG.info("Tiles saved in {}", tileSaveChronograph.stop());
+                        result.addStep(PanoProcessState.Step
+                                .of(PanoProcessState.StepType.SAVE_TILES)
+                                .with(PanoProcessState.ValueType.LEVEL_INDEX, levelIndex)
+                                .with(PanoProcessState.ValueType.FACE, face)
+                                .with(PanoProcessState.ValueType.DURATION_MS, tileSaveChronograph.getDurationMs())
+                                .with(PanoProcessState.ValueType.DURATION_HUMAN, tileSaveChronograph.getDurationForHuman()));
 
                         // downscale cube face image
                         if (levelIndex > 0) {
@@ -313,6 +387,11 @@ public class App {
                             ConsoleProgressBar downHalfScaleProgress = ConsoleProgressBar.of(String.format("Downscale of %s", face));
                             scaledCubeFace = DownHalfScaler.scale(scaledCubeFace, downHalfScaleProgress);
                             LOG.info("Downscaled face in {}", downscaleChronograph.stop());
+                            result.addStep(PanoProcessState.Step
+                                    .of(PanoProcessState.StepType.SCALE_LEVEL)
+                                    .with(PanoProcessState.ValueType.LEVEL_INDEX, levelIndex)
+                                    .with(PanoProcessState.ValueType.DURATION_MS, downscaleChronograph.getDurationMs())
+                                    .with(PanoProcessState.ValueType.DURATION_HUMAN, downscaleChronograph.getDurationForHuman()));
                         }
                     }
                 }
@@ -359,6 +438,9 @@ public class App {
             Pannellum pannellum = new Pannellum();
             String html = pannellum.render(pannellumConfig);
             FileUtils.write(viewerPannellumFile, html, StandardCharsets.UTF_8);
+            result.addStep(PanoProcessState.Step
+                    .of(PanoProcessState.StepType.VIEWER_PANNELLUM)
+                    .with(PanoProcessState.ValueType.FILE, viewerPannellumFile));
         }
 
         // Viewer - Marzipano
@@ -390,14 +472,28 @@ public class App {
             Marzipano marzipano = new Marzipano();
             String html = marzipano.render(marzipanoConfig);
             FileUtils.write(viewerMarzipanoFile, html, StandardCharsets.UTF_8);
+            result.addStep(PanoProcessState.Step
+                    .of(PanoProcessState.StepType.VIEWER_MARZIPANO)
+                    .with(PanoProcessState.ValueType.FILE, viewerMarzipanoFile));
         }
 
         // Archive
         if (archiveEnabled) {
+            Chronograph zipChronograph = Chronograph.start();
             Zipper.compress(outputFolder, archiveFile);
+            LOG.info("Archived to '{}' in {}", archiveFile.getAbsolutePath(), zipChronograph.stop());
+            result.addStep(PanoProcessState.Step
+                    .of(PanoProcessState.StepType.ARCHIVE)
+                    .with(PanoProcessState.ValueType.FILE, archiveFile)
+                    .with(PanoProcessState.ValueType.DURATION_MS, zipChronograph.getDurationMs())
+                    .with(PanoProcessState.ValueType.DURATION_HUMAN, zipChronograph.getDurationForHuman()));
         }
 
-
         LOG.info("Completed in {}", appChronograph.stop());
+        result.addStep(PanoProcessState.Step
+                .of(PanoProcessState.StepType.FINISHED)
+                .with(PanoProcessState.ValueType.DURATION_MS, appChronograph.getDurationMs())
+                .with(PanoProcessState.ValueType.DURATION_HUMAN, appChronograph.getDurationForHuman()));
+        return result;
     }
 }
