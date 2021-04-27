@@ -86,24 +86,7 @@ public class App {
             JsonUtils.saveJson(t, config);
         }
 
-        PanoProcessState panoProcessState = renderPano(config);
-
-        File outputFolder = config.getOutputFolder();
-        if (outputFolder.exists()) {
-            LastRun lastRun = new LastRun();
-            lastRun.setLastRun(panoProcessState);
-            if (srcConfigFile != null) {
-                lastRun.setConfigHash(HashUtils.hashFile(srcConfigFile));
-            } else {
-                File configFile = new File(outputFolder, DEFAULT_CONFIG_FILE_NAME);
-                if (configFile.exists()) {
-                    lastRun.setConfigHash(HashUtils.hashFile(configFile));
-                }
-            }
-            File lastRunFile = new File(new File(outputFolder, DEFAULT_LAST_RUN_CONFIG_FOLDER_NAME), DEFAULT_LAST_RUN_CONFIG_FILE_NAME);
-            FileUtils.forceMkdirParent(lastRunFile);
-            JsonUtils.saveJson(lastRunFile, lastRun);
-        }
+        PanoProcessState panoProcessState = renderPano(config, srcConfigFile);
 
         System.out.println(JsonUtils.toJson(panoProcessState));
     }
@@ -114,14 +97,14 @@ public class App {
     private static void renderAll(File root) throws IOException, ExecutionException, InterruptedException {
         List<PanoDirectory> panoDirectories = PanoSearcher.scanRecursive(root);
         for (PanoDirectory p : panoDirectories) {
-            renderPano(p.getConfig());
+            renderPano(p.getConfig(), p.getConfigFile());
         }
     }
 
     /**
      * one single pano
      */
-    private static PanoProcessState renderPano(Config config) throws IOException, InterruptedException, ExecutionException {
+    private static PanoProcessState renderPano(Config config, File srcConfigFile) throws IOException, InterruptedException, ExecutionException {
         Chronograph appChronograph = Chronograph.start();
         PanoProcessState result = new PanoProcessState(config.getOutputFolder());
 
@@ -494,6 +477,23 @@ public class App {
                 .of(PanoProcessState.StepType.FINISHED)
                 .with(PanoProcessState.ValueType.DURATION_MS, appChronograph.getDurationMs())
                 .with(PanoProcessState.ValueType.DURATION_HUMAN, appChronograph.getDurationForHuman()));
+
+        if (outputFolder.exists()) {
+            LastRun lastRun = new LastRun();
+            lastRun.setLastRun(result);
+            if (srcConfigFile != null) {
+                lastRun.setConfigHash(HashUtils.hashFile(srcConfigFile));
+            } else {
+                File configFile = new File(outputFolder, DEFAULT_CONFIG_FILE_NAME);
+                if (configFile.exists()) {
+                    lastRun.setConfigHash(HashUtils.hashFile(configFile));
+                }
+            }
+            File lastRunFile = new File(new File(outputFolder, DEFAULT_LAST_RUN_CONFIG_FOLDER_NAME), DEFAULT_LAST_RUN_CONFIG_FILE_NAME);
+            FileUtils.forceMkdirParent(lastRunFile);
+            JsonUtils.saveJson(lastRunFile, lastRun);
+        }
+
         return result;
     }
 }
