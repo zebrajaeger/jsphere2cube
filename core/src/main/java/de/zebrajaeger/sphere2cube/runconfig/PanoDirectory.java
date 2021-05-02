@@ -1,6 +1,5 @@
 package de.zebrajaeger.sphere2cube.runconfig;
 
-import de.zebrajaeger.sphere2cube.FileUtils;
 import de.zebrajaeger.sphere2cube.Stringable;
 import de.zebrajaeger.sphere2cube.config.Config;
 
@@ -14,16 +13,18 @@ public class PanoDirectory extends Stringable {
     public static final String DEFAULT_DIR_FILENAME = ".sphere2cube";
     public static final String DEFAULT_DIR_RUN_FILENAME = "lastrun.json";
 
-    private Config config;
+    private File root;
+
     private File configFile;
-    private String configHash;
+    private Config config;
 
-    private RunConfig runConfig;
-    private File runConfigFile;
-
+    private File lastRunFile;
+    private LastRun lastRun;
 
     public static PanoDirectory of(File directory) throws IOException {
+
         PanoDirectory result = new PanoDirectory();
+        result.root = directory;
 
         File[] rootFiles = directory.listFiles();
         if (rootFiles != null) {
@@ -31,7 +32,7 @@ public class PanoDirectory extends Stringable {
             Optional<File> configFile = Arrays.stream(rootFiles).filter(file -> DEFAULT_CONFIG_FILENAME.equals(file.getName())).findFirst();
             if (configFile.isPresent()) {
                 result.config = Config.of(configFile.get());
-                result.configHash = FileUtils.hashFile(configFile.get());
+                result.configFile = configFile.get();
             }
 
             // hidden config directory
@@ -41,8 +42,8 @@ public class PanoDirectory extends Stringable {
                 if (runConfigDirFiles != null) {
                     Optional<File> lastRun = Arrays.stream(runConfigDirFiles).filter(file -> DEFAULT_DIR_RUN_FILENAME.equals(file.getName())).findFirst();
                     if (lastRun.isPresent()) {
-                        result.runConfig = RunConfig.of(lastRun.get());
-                        result.runConfigFile = lastRun.get();
+                        result.lastRun = LastRun.of(lastRun.get());
+                        result.lastRunFile = lastRun.get();
                     }
                 }
             }
@@ -51,34 +52,23 @@ public class PanoDirectory extends Stringable {
         return result;
     }
 
-    public boolean isPanoDir() {
-        return config != null;
-    }
-
-    public boolean matchesHash() {
-        if (runConfig != null && runConfig.getConfigHash() != null) {
-            return runConfig.getConfigHash().equals(configHash);
-        }
-        return false;
+    public File getConfigFile() {
+        return configFile;
     }
 
     public Config getConfig() {
         return config;
     }
 
-    public File getConfigFile() {
-        return configFile;
+    public File getLastRunFile() {
+        return lastRunFile;
     }
 
-    public String getConfigHash() {
-        return configHash;
+    public LastRun getLastRun() {
+        return lastRun;
     }
 
-    public RunConfig getRunConfig() {
-        return runConfig;
-    }
-
-    public File getRunConfigFile() {
-        return runConfigFile;
+    public File getRoot() {
+        return root;
     }
 }

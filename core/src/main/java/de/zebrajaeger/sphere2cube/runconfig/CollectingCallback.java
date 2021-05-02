@@ -8,7 +8,7 @@ class CollectingCallback implements Callback {
 
     @Override
     public void onPano(PanoDirectory panoDirectory) {
-        if (panoDirectory.isPanoDir()) {
+        if (panoDirectory.getConfig() != null) {
             panoDirectories.add(panoDirectory);
         }
     }

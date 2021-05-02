@@ -8,17 +8,17 @@ import java.io.File;
 
 public class InputConfig extends Stringable {
     @JsonProperty("path")
-    private File inputImageFile;
+    private String inputImageFile;
     @JsonProperty("horizontal-angel")
     private Double inputImageHorizontalAngel;
     @JsonProperty("vertical-offset")
     private Double inputImageVerticalOffset;
 
-    public File getInputImageFile() {
+    public String getInputImageFile() {
         return inputImageFile;
     }
 
-    public void setInputImageFile(File inputImageFile) {
+    public void setInputImageFile(String inputImageFile) {
         this.inputImageFile = inputImageFile;
     }
 

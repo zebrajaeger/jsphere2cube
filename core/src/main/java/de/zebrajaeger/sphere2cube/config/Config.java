@@ -26,7 +26,7 @@ public class Config extends Stringable {
     @JsonProperty("source")
     private InputConfig inputConfig = new InputConfig();
     @JsonProperty("target")
-    private File outputFolder = new File("./build");
+    private String outputFolder = "build";
     @JsonProperty("preview")
     PreviewsConfig previewsConfig = new PreviewsConfig();
     @JsonProperty("cubemap")
@@ -68,11 +68,11 @@ public class Config extends Stringable {
 
         // target
         if (cmd.hasOption("t")) {
-            config.setOutputFolder(new File(cmd.getOptionValue("t")).getCanonicalFile());
+            config.setOutputFolder(cmd.getOptionValue("t"));
         }
 
         // source
-        config.getInputConfig().setInputImageFile(new File(cmd.getOptionValue("s")));
+        config.getInputConfig().setInputImageFile(cmd.getOptionValue("s"));
         if (cmd.hasOption("w")) {
             config.getInputConfig().setInputImageHorizontalAngel(Double.parseDouble(cmd.getOptionValue("w")));
         }
@@ -209,11 +209,11 @@ public class Config extends Stringable {
         this.debug = debug;
     }
 
-    public File getOutputFolder() {
+    public String getOutputFolder() {
         return outputFolder;
     }
 
-    public void setOutputFolder(File outputFolder) {
+    public void setOutputFolder(String outputFolder) {
         this.outputFolder = outputFolder;
     }
 

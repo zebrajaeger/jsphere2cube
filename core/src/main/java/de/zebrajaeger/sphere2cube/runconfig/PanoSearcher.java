@@ -37,17 +37,16 @@ public class PanoSearcher implements Callable<List<PanoDirectory>> {
 
     private void scanRecursiveIntern(File root, Callback callback) throws IOException {
         LOG.debug("scan '{}'", root.getAbsolutePath());
-        File[] rootFiles = root.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
-        if (rootFiles == null) {
-            return;
-        }
 
-        for (File f : rootFiles) {
-            PanoDirectory panoDirectory = PanoDirectory.of(f);
-            if (panoDirectory.isPanoDir()) {
-                callback.onPano(panoDirectory);
-            } else {
-                // do recursion
+        PanoDirectory panoDirectory = PanoDirectory.of(root);
+        if (panoDirectory.getConfig() != null) {
+            callback.onPano(panoDirectory);
+        } else {
+            File[] rootFiles = root.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
+            if (rootFiles == null) {
+                return;
+            }
+            for (File f : rootFiles) {
                 scanRecursiveIntern(f, callback);
             }
         }

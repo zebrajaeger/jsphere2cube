@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class PanoProcessState extends Stringable {
     @JsonProperty
@@ -62,9 +63,28 @@ public class PanoProcessState extends Stringable {
     public void addStep(Step step) {
         steps.add(step);
     }
+    public Optional<Step> findStep(StepType stepType){
+        return steps.stream().filter(step -> step.stepType.equals(stepType)).findFirst();
+    }
 
     public boolean isFinished() {
         return steps.stream().anyMatch(step -> StepType.FINISHED.equals(step.stepType));
+    }
+
+    public File getRootFolder() {
+        return rootFolder;
+    }
+
+    public void setRootFolder(File rootFolder) {
+        this.rootFolder = rootFolder;
+    }
+
+    public List<Step> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<Step> steps) {
+        this.steps = steps;
     }
 }
 

@@ -12,11 +12,11 @@ public class LastRun extends Stringable {
     @JsonProperty
     private String configHash;
     @JsonProperty
-    private PanoProcessState lastRun;
+    private PanoProcessState panoProcessState;
 
-    public static RunConfig of(File configFile) throws IOException {
+    public static LastRun of(File configFile) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(configFile, RunConfig.class);
+        return mapper.readValue(configFile, LastRun.class);
     }
 
     public String getConfigHash() {
@@ -27,11 +27,11 @@ public class LastRun extends Stringable {
         this.configHash = configHash;
     }
 
-    public PanoProcessState getLastRun() {
-        return lastRun;
+    public PanoProcessState getPanoProcessState() {
+        return panoProcessState;
     }
 
-    public void setLastRun(PanoProcessState lastRun) {
-        this.lastRun = lastRun;
+    public void setPanoProcessState(PanoProcessState panoProcessState) {
+        this.panoProcessState = panoProcessState;
     }
 }
