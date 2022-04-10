@@ -188,9 +188,16 @@ public class PSD implements ReadableImage {
         } else {
             layerAndMaskInformationLength = dis.readU64();
         }
+
         System.out.println("Layer and Mask Information length: " + layerAndMaskInformationLength);
-        if (dis.skip(layerAndMaskInformationLength) != layerAndMaskInformationLength) {
-            throw new IOException(String.format("skip does not skip %d Bytes", layerAndMaskInformationLength));
+        long skipped = 0;
+        while (skipped < layerAndMaskInformationLength) {
+            long temp = dis.skip(layerAndMaskInformationLength - skipped);
+            if (temp > 0) {
+                skipped += temp;
+            } else {
+                throw new IOException("Skip ´Layer and Mask Information failed");
+            }
         }
     }
 }
