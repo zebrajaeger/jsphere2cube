@@ -10,7 +10,7 @@ public class PreviewsConfig extends Stringable {
     @JsonProperty("equirectangular")
     private PreviewConfig equirectangularPreview = new PreviewConfig(true, 200, "preview_equirectangular.jpg");
     @JsonProperty("scaled")
-    private PreviewConfig scaledPreview = new PreviewConfig(true, 200, "preview_scaled.jpg");
+    private PreviewConfig scaledPreview = new PreviewConfig(true, 200, 300000,"preview_scaled.jpg");
 
     public PreviewConfig getCubeMapPreview() {
         return cubeMapPreview;

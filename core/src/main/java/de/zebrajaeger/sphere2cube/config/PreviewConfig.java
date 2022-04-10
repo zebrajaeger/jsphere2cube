@@ -2,13 +2,14 @@ package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.zebrajaeger.sphere2cube.Stringable;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 public class PreviewConfig extends Stringable {
     @JsonProperty
     private boolean enabled;
     @JsonProperty
     private int edge;
+    @JsonProperty
+    private Integer maxSize;
     @JsonProperty
     private String target;
 
@@ -18,6 +19,13 @@ public class PreviewConfig extends Stringable {
     public PreviewConfig(boolean enabled, int edge, String target) {
         this.enabled = enabled;
         this.edge = edge;
+        this.target = target;
+    }
+
+    public PreviewConfig(boolean enabled, int edge, Integer maxSize, String target) {
+        this.enabled = enabled;
+        this.edge = edge;
+        this.maxSize = maxSize;
         this.target = target;
     }
 
@@ -45,4 +53,11 @@ public class PreviewConfig extends Stringable {
         this.target = target;
     }
 
+    public Integer getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(Integer maxSize) {
+        this.maxSize = maxSize;
+    }
 }

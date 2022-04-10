@@ -18,11 +18,7 @@ import de.zebrajaeger.sphere2cube.runconfig.PanoSearcher;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.tiles.TileSaveJob;
-import de.zebrajaeger.sphere2cube.viewer.Marzipano;
-import de.zebrajaeger.sphere2cube.viewer.MarzipanoConfig;
-import de.zebrajaeger.sphere2cube.viewer.PanellumConfig;
-import de.zebrajaeger.sphere2cube.viewer.Pannellum;
-import de.zebrajaeger.sphere2cube.viewer.ViewerUtils;
+import de.zebrajaeger.sphere2cube.viewer.*;
 import de.zebrajaeger.sphere2cube.zip.Zipper;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
@@ -175,6 +171,7 @@ public class App {
         // Preview Scaled
         boolean previewScaledOriginalEnabled = config.getPreviewsConfig().getScaledPreview().isEnabled();
         int previewScaledOriginalEdge = config.getPreviewsConfig().getScaledPreview().getEdge();
+        int previewScaledMaxSize = config.getPreviewsConfig().getScaledPreview().getMaxSize();
         File previewScaledOriginalTarget = new File(outputFolder, "preview_scaled.jpg");
 
         // Cube faces
@@ -312,7 +309,7 @@ public class App {
 
             LOG.info("Save preview scaled: '{}'", previewScaledOriginalTarget.getAbsolutePath());
             previewChronograph = Chronograph.start();
-            ImgUtils.save(scaled, previewScaledOriginalTarget, 0.85f);
+            ImgUtils.save(scaled, previewScaledOriginalTarget, previewScaledMaxSize);
             LOG.info("Saved preview scaled in: '{}'", previewChronograph.stop());
 
             result.addStep(PanoProcessState.Step

@@ -4,12 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.zebrajaeger.sphere2cube.JsonUtils;
 import de.zebrajaeger.sphere2cube.Stringable;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -106,6 +101,9 @@ public class Config extends Stringable {
         if (cmd.hasOption("pse")) {
             config.getPreviewsConfig().getScaledPreview().setEdge(Integer.parseInt(cmd.getOptionValue("pse")));
         }
+        if (cmd.hasOption("psm")) {
+            config.getPreviewsConfig().getScaledPreview().setMaxSize(Integer.parseInt(cmd.getOptionValue("psm")));
+        }
         if (cmd.hasOption("pst")) {
             config.getPreviewsConfig().getScaledPreview().setTarget(cmd.getOptionValue("pst"));
         }
@@ -178,6 +176,7 @@ public class Config extends Stringable {
         // Preview - Scaled
         options.addOption("ps", "preview-scaled", false, "Render scaled preview image. Default true");
         options.addOption("pse", "preview-scaled-edge", true, "Edge size of scaled preview image.");
+        options.addOption("psm", "preview-scaled-maxsize", true, "Maximum files size of scaled preview image.");
         options.addOption("pst", "preview-scaled-target", true, "Path of scaled-preview image.");
 
         // Cube faces

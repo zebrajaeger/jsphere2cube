@@ -19,6 +19,8 @@ public class Marzipano extends Viewer {
                 <html>
                 <head>
                     <title>{{htmlTitle}}}</title>
+                    <meta property="og:title" content="{{htmlTitle}}"/>
+                    <meta property="og:image" content="{{previewPath}}"/>
                     {{#js}}
                     <script type="text/javascript" src="{{.}}"></script>
                     {{/js}}

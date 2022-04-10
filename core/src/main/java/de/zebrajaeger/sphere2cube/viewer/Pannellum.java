@@ -13,6 +13,8 @@ public class Pannellum extends Viewer {
                      <head>
                          <meta charset="utf-8">
                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                         <meta property="og:title" content="{{htmlTitle}}"/>
+                         <meta property="og:image" content="{{previewPath}}"/>
                          <title>{{htmlTitle}}</title>
                          {{#js}}
                          <script type="text/javascript" src="{{.}}"></script>

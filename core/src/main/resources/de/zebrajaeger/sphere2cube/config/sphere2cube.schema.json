@@ -31,6 +31,9 @@
             "edge": {
               "type": "integer"
             },
+            "maxSize": {
+              "type": "integer"
+            },
             "target": {
               "type": "string"
             }
