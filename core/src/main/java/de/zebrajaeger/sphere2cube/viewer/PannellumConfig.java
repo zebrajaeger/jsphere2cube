@@ -1,30 +1,23 @@
 package de.zebrajaeger.sphere2cube.viewer;
 
-public class PanellumConfig extends ViewerConfig {
-    private String htmlTitle = "sphere2cube-java with Pannellum";
+import de.zebrajaeger.sphere2cube.panodescription.PanoDescription;
+
+public class PannellumConfig extends ViewerConfig {
     private int levelCount;
     private int targetImageSize;
     private int tileSize;
     private String tileFileType = "png";
-    private String previewPath = "preview_scaled.jpg";
     private boolean autoLoad = true;
     private double xMin = -180d;
     private double xMax = 180d;
     private double yMin = -90d;
     private double yMax = 90d;
 
-    public PanellumConfig(int levelCount, int targetImageSize, int tileSize) {
+    public PannellumConfig(int levelCount, int targetImageSize, int tileSize, PanoDescription panoDescription) {
+        super(panoDescription);
         this.levelCount = levelCount;
         this.targetImageSize = targetImageSize;
         this.tileSize = tileSize;
-    }
-
-    public String getHtmlTitle() {
-        return htmlTitle;
-    }
-
-    public void setHtmlTitle(String htmlTitle) {
-        this.htmlTitle = htmlTitle;
     }
 
     public int getLevelCount() {
@@ -57,14 +50,6 @@ public class PanellumConfig extends ViewerConfig {
 
     public void setTileFileType(String tileFileType) {
         this.tileFileType = tileFileType;
-    }
-
-    public String getPreviewPath() {
-        return previewPath;
-    }
-
-    public void setPreviewPath(String previewPath) {
-        this.previewPath = previewPath;
     }
 
     public boolean isAutoLoad() {

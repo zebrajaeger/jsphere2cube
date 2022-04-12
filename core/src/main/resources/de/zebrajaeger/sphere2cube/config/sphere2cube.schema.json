@@ -141,9 +141,6 @@
             "enabled": {
               "type": "boolean"
             },
-            "title": {
-              "type": "string"
-            },
             "target": {
               "type": "string"
             },
@@ -166,7 +163,6 @@
           },
           "required": [
             "enabled",
-            "title",
             "target",
             "js",
             "css"
@@ -178,9 +174,6 @@
             "enabled": {
               "type": "boolean"
             },
-            "title": {
-              "type": "string"
-            },
             "target": {
               "type": "string"
             },
@@ -203,7 +196,6 @@
           },
           "required": [
             "enabled",
-            "title",
             "target",
             "js",
             "css"

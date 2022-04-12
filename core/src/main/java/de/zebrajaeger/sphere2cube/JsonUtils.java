@@ -8,6 +8,7 @@ import de.zebrajaeger.sphere2cube.config.Config;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -45,17 +46,25 @@ public class JsonUtils {
     }
 
     /**
-     * @see <a href="https://json-schema.org/">Json Schema</a>
+     * @see <a href="https://json-schema.org/">Json Schema</a><br>
+     * You can try <a href="https://app.quicktype.io/#l=schema">quicktaype</a> to generate a schema from data.
      */
-    public static void validate(File file, String schema) throws IOException {
-        validate(FileUtils.readFileToString(file, StandardCharsets.UTF_8), schema);
+    public static void validate(File file, String schemaName) throws IOException {
+        validate(FileUtils.readFileToString(file, StandardCharsets.UTF_8), schemaName);
     }
 
     public static void validate(String jsonString, String schemaName) {
-        InputStream schemaIs = Objects.requireNonNull(Config.class.getResourceAsStream(schemaName), String.format("Schema '%s' not found", schemaName));
-        JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaIs));
-        Schema schema = SchemaLoader.load(jsonSchema);
-        schema.validate(new JSONObject(new JSONTokener(IOUtils.toInputStream(jsonString, StandardCharsets.UTF_8))));
+        try {
+            InputStream schemaIs = Objects.requireNonNull(Config.class.getResourceAsStream(schemaName), String.format("Schema '%s' not found", schemaName));
+            JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaIs));
+            Schema schema = SchemaLoader.load(jsonSchema);
+            schema.validate(new JSONObject(new JSONTokener(IOUtils.toInputStream(jsonString, StandardCharsets.UTF_8))));
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+            e.getCausingExceptions().stream()
+                    .map(ValidationException::getMessage)
+                    .forEach(System.out::println);
+            throw e;
+        }
     }
-
 }

@@ -1,0 +1,13 @@
+{
+  "title": "I am a title",
+  "description": "This is a great panorma!",
+  "type": "website",
+  "preview": {
+    "path": "scaled_preview.jpg",
+    "alt": "Panorama preview"
+  },
+  "location": {
+    "latitude": 53.55869982043405,
+    "longitude": 9.936953260219806
+  }
+}

@@ -10,8 +10,6 @@ import java.util.List;
 public class ViewerConfigBase extends Stringable {
     @JsonProperty
     private boolean enabled = true;
-    @JsonProperty("title")
-    private String pageTitle;
     @JsonProperty
     private String target;
     @JsonProperty("css")
@@ -19,8 +17,7 @@ public class ViewerConfigBase extends Stringable {
     @JsonProperty("js")
     private List<URL> jsFiles = new ArrayList<>();
 
-    public ViewerConfigBase(String pageTitle, String target) {
-        this.pageTitle = pageTitle;
+    public ViewerConfigBase(String target) {
         this.target = target;
     }
 
@@ -30,14 +27,6 @@ public class ViewerConfigBase extends Stringable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getPageTitle() {
-        return pageTitle;
-    }
-
-    public void setPageTitle(String pageTitle) {
-        this.pageTitle = pageTitle;
     }
 
     public String getTarget() {

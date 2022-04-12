@@ -2,29 +2,30 @@
 {
   "debug": false,
   "source": {
-    "path": "PATH TO YOUR PANO IMAGE"
+    "path": "C:\\Users\\l\\Desktop\\1pano\\[Group 0]-1E6A7198_1E6A7262-65 images.psb"
   },
   "target": "./build",
   "preview": {
     "cubemap": {
-      "enabled": true,
+      "enabled": false,
       "edge": 200,
       "target": "preview_cube.jpg"
     },
     "equirectangular": {
-      "enabled": true,
+      "enabled": false,
       "edge": 800,
       "target": "preview_equirectangular.jpg"
     },
     "scaled": {
-      "enabled": true,
+      "enabled": false,
       "edge": 800,
+      "maxSize": 250000,
       "target": "preview_scaled.jpg"
     }
   },
   "cubemap": {
     "tiles": {
-      "enabled": true,
+      "enabled": false,
       "tileEdge": 512,
       "target": "{{levelCount}}/{{faceNameShortLowerCase}}{{xIndex}}_{{yIndex}}.png"
     },
@@ -56,7 +57,7 @@
     }
   },
   "archive": {
-    "enabled": true,
+    "enabled": false,
     "target": "pano.zip"
   }
 }

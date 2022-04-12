@@ -105,20 +105,21 @@ Example (at least change source.path for input file, everything else may be ok):
 ## TODO
 
 ### HIGH (required)
-- ~~More differentiated logging~~ 
-- ~~Progress bar~~
-- ~~Timer~~
-- ~~Marzipano viewer~~  
-- ~~read embedded xml of autopano giga~~
-- ~~restrict view angle dependent from source image bounds~~
-- ~~Add css and js from viewers instead link to CDN~~
-- ~~zip file packing (multithreaded)~~
+- [X] More differentiated logging 
+- [X] Progress bar~~
+- [X] Timer~~
+- [X] Marzipano viewer~~  
+- [X] read embedded xml of autopano giga~~
+- [X] restrict view angle dependent from source image bounds~~
+- [X] Add css and js from viewers instead link to CDN~~
+- [X] zip file packing (multithreaded)~~
 
 ### MID (nice to have)
-- maven plugin
-- ~~self containing application~~
-- Populate README
+- [ ] maven plugin
+- [X] self containing application
+- [ ] Populate README
+- [X] Panorama description file
 
 ### LOW (later or never...)
-- output image in tiles / dump to HDD
-- input image in tiles / dump to HDD
+- [ ] output image in tiles / dump to HDD
+- [ ] input image in tiles / dump to HDD

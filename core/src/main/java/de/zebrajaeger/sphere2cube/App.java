@@ -9,6 +9,7 @@ import de.zebrajaeger.sphere2cube.names.TileNameGenerator;
 import de.zebrajaeger.sphere2cube.pano.PanoInfo;
 import de.zebrajaeger.sphere2cube.pano.PanoLevel;
 import de.zebrajaeger.sphere2cube.pano.PanoUtils;
+import de.zebrajaeger.sphere2cube.panodescription.PanoDescription;
 import de.zebrajaeger.sphere2cube.progress.ConsoleProgressBar;
 import de.zebrajaeger.sphere2cube.progress.Progress;
 import de.zebrajaeger.sphere2cube.psd.PSD;
@@ -23,7 +24,6 @@ import de.zebrajaeger.sphere2cube.zip.Zipper;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jline.utils.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -188,6 +188,21 @@ public class App {
         File archiveFile = new File(outputFolder, config.getArchiveConfig().getTarget());
 
         // +===============================================================
+        // | Read Description
+        // +===============================================================
+        String descriptionFileName = FilenameUtils.getBaseName(inputImageFile.getName()) + ".json";
+        File descriptionFile = new File(inputImageFile.getParentFile(), descriptionFileName);
+        PanoDescription panoDescription = null;
+        if (descriptionFile.exists()) {
+            System.out.println("Found description file: '" + descriptionFile.getAbsolutePath() + "'");
+            JsonUtils.validate(descriptionFile, "panodescription.schema.json");
+            panoDescription = JsonUtils.loadJson(descriptionFile, PanoDescription.class);
+        } else {
+            System.out.println("No description file found at '" + descriptionFile.getAbsolutePath() + "'");
+            panoDescription = new PanoDescription();
+        }
+
+        // +===============================================================
         // | Init and load source
         // +===============================================================
 
@@ -246,6 +261,7 @@ public class App {
         // create equirectangular source image
         EquirectangularImage source = EquirectangularImage.of(sourceImage, inputImageHorizontalAngel, inputImageVerticalOffset);
         PanoInfo panoInfo = PanoUtils.calcPanoInfo(source, tileEdge);
+
 
         // +===============================================================
         // | Preview(s)
@@ -347,75 +363,73 @@ public class App {
                     ImgUtils.drawBorder(cubeFace, face.getColor());
                 }
 
-                if (cubeMapTilesEnabled || cubeMapFacesEnabled) {
-                    Img scaledCubeFace = cubeFace;
-                    for (int levelIndex = panoInfo.getMaxLevelIndex(); levelIndex >= 0; --levelIndex) {
-                        PanoLevel level = panoInfo.getLevel(levelIndex);
+                Img scaledCubeFace = cubeFace;
+                for (int levelIndex = panoInfo.getMaxLevelIndex(); levelIndex >= 0; --levelIndex) {
+                    PanoLevel level = panoInfo.getLevel(levelIndex);
 
-                        // save face image
-                        if (cubeMapFacesEnabled) {
-                            File faceFile = new File(outputFolder, cubeFaceNameGenerator.generate(panoInfo, levelIndex, face));
-                            LOG.info("Save cube face: '{}'({}/6) -> {}", face, faceCount, faceFile.getAbsolutePath());
-                            Chronograph cubeFaceSaveChronograph = Chronograph.start();
-                            FileUtils.forceMkdirParent(faceFile);
-                            ImgUtils.save(scaledCubeFace, faceFile, null);
-                            LOG.info("Save cube face in '{}'", cubeFaceSaveChronograph.stop());
-                            result.addStep(PanoProcessState.Step
-                                    .of(PanoProcessState.StepType.SAVE_FACE)
-                                    .with(PanoProcessState.ValueType.FILE, faceFile)
-                                    .with(PanoProcessState.ValueType.LEVEL_INDEX, levelIndex)
-                                    .with(PanoProcessState.ValueType.FACE, face)
-                                    .with(PanoProcessState.ValueType.DURATION_MS, cubeFaceSaveChronograph.getDurationMs())
-                                    .with(PanoProcessState.ValueType.DURATION_HUMAN, cubeFaceSaveChronograph.getDurationForHuman()));
-                        }
-
-                        // render tiles for face and level
-                        int lineTileCount = level.getTileCount();
-                        int tileCount = lineTileCount * lineTileCount;
-
-                        LOG.info("Save tiles of '{}'({}/6): {}", face, faceCount, tileCount);
-                        Chronograph tileSaveChronograph = Chronograph.start();
-                        MaxJobQueueExecutor tileExecutor = MaxJobQueueExecutor.withMaxQueueSize();
-                        ConsoleProgressBar tileProgressBar = ConsoleProgressBar.of(String.format("Tiles of %s", face));
-                        tileProgressBar.start(tileCount);
-                        for (int yIndex = 0; yIndex < lineTileCount; ++yIndex) {
-                            for (int xIndex = 0; xIndex < lineTileCount; ++xIndex) {
-                                String name = tileNameGenerator.generate(panoInfo, levelIndex, face, xIndex, yIndex);
-
-                                tileExecutor.addJob(new TileSaveJob(
-                                        scaledCubeFace,
-                                        new File(outputFolder, name),
-                                        tileEdge,
-                                        xIndex * tileEdge,
-                                        yIndex * tileEdge,
-                                        debug));
-                                tileProgressBar.update((long) yIndex * lineTileCount + xIndex);
-                            }
-                        }
-                        tileExecutor.shutdown();
-                        tileProgressBar.finish();
-                        LOG.info("Tiles saved in {}", tileSaveChronograph.stop());
+                    // save face image
+                    if (cubeMapFacesEnabled) {
+                        File faceFile = new File(outputFolder, cubeFaceNameGenerator.generate(panoInfo, levelIndex, face));
+                        LOG.info("Save cube face: '{}'({}/6) -> {}", face, faceCount, faceFile.getAbsolutePath());
+                        Chronograph cubeFaceSaveChronograph = Chronograph.start();
+                        FileUtils.forceMkdirParent(faceFile);
+                        ImgUtils.save(scaledCubeFace, faceFile, null);
+                        LOG.info("Save cube face in '{}'", cubeFaceSaveChronograph.stop());
                         result.addStep(PanoProcessState.Step
-                                .of(PanoProcessState.StepType.SAVE_TILES)
+                                .of(PanoProcessState.StepType.SAVE_FACE)
+                                .with(PanoProcessState.ValueType.FILE, faceFile)
                                 .with(PanoProcessState.ValueType.LEVEL_INDEX, levelIndex)
                                 .with(PanoProcessState.ValueType.FACE, face)
-                                .with(PanoProcessState.ValueType.DURATION_MS, tileSaveChronograph.getDurationMs())
-                                .with(PanoProcessState.ValueType.DURATION_HUMAN, tileSaveChronograph.getDurationForHuman()));
+                                .with(PanoProcessState.ValueType.DURATION_MS, cubeFaceSaveChronograph.getDurationMs())
+                                .with(PanoProcessState.ValueType.DURATION_HUMAN, cubeFaceSaveChronograph.getDurationForHuman()));
+                    }
 
-                        // downscale cube face image
-                        if (levelIndex > 0) {
-                            Chronograph downscaleChronograph = Chronograph.start();
-                            int newEdge2 = level.getFaceEdge() / 2;
-                            LOG.info("Downscale face '{}'({}/6) to 1/2 = {},{}", face, faceCount, newEdge2, newEdge2);
-                            ConsoleProgressBar downHalfScaleProgress = ConsoleProgressBar.of(String.format("Downscale of %s", face));
-                            scaledCubeFace = DownHalfScaler.scale(scaledCubeFace, downHalfScaleProgress);
-                            LOG.info("Downscaled face in {}", downscaleChronograph.stop());
-                            result.addStep(PanoProcessState.Step
-                                    .of(PanoProcessState.StepType.SCALE_LEVEL)
-                                    .with(PanoProcessState.ValueType.LEVEL_INDEX, levelIndex)
-                                    .with(PanoProcessState.ValueType.DURATION_MS, downscaleChronograph.getDurationMs())
-                                    .with(PanoProcessState.ValueType.DURATION_HUMAN, downscaleChronograph.getDurationForHuman()));
+                    // render tiles for face and level
+                    int lineTileCount = level.getTileCount();
+                    int tileCount = lineTileCount * lineTileCount;
+
+                    LOG.info("Save tiles of '{}'({}/6): {}", face, faceCount, tileCount);
+                    Chronograph tileSaveChronograph = Chronograph.start();
+                    MaxJobQueueExecutor tileExecutor = MaxJobQueueExecutor.withMaxQueueSize();
+                    ConsoleProgressBar tileProgressBar = ConsoleProgressBar.of(String.format("Tiles of %s", face));
+                    tileProgressBar.start(tileCount);
+                    for (int yIndex = 0; yIndex < lineTileCount; ++yIndex) {
+                        for (int xIndex = 0; xIndex < lineTileCount; ++xIndex) {
+                            String name = tileNameGenerator.generate(panoInfo, levelIndex, face, xIndex, yIndex);
+
+                            tileExecutor.addJob(new TileSaveJob(
+                                    scaledCubeFace,
+                                    new File(outputFolder, name),
+                                    tileEdge,
+                                    xIndex * tileEdge,
+                                    yIndex * tileEdge,
+                                    debug));
+                            tileProgressBar.update((long) yIndex * lineTileCount + xIndex);
                         }
+                    }
+                    tileExecutor.shutdown();
+                    tileProgressBar.finish();
+                    LOG.info("Tiles saved in {}", tileSaveChronograph.stop());
+                    result.addStep(PanoProcessState.Step
+                            .of(PanoProcessState.StepType.SAVE_TILES)
+                            .with(PanoProcessState.ValueType.LEVEL_INDEX, levelIndex)
+                            .with(PanoProcessState.ValueType.FACE, face)
+                            .with(PanoProcessState.ValueType.DURATION_MS, tileSaveChronograph.getDurationMs())
+                            .with(PanoProcessState.ValueType.DURATION_HUMAN, tileSaveChronograph.getDurationForHuman()));
+
+                    // downscale cube face image
+                    if (levelIndex > 0) {
+                        Chronograph downscaleChronograph = Chronograph.start();
+                        int newEdge2 = level.getFaceEdge() / 2;
+                        LOG.info("Downscale face '{}'({}/6) to 1/2 = {},{}", face, faceCount, newEdge2, newEdge2);
+                        ConsoleProgressBar downHalfScaleProgress = ConsoleProgressBar.of(String.format("Downscale of %s", face));
+                        scaledCubeFace = DownHalfScaler.scale(scaledCubeFace, downHalfScaleProgress);
+                        LOG.info("Downscaled face in {}", downscaleChronograph.stop());
+                        result.addStep(PanoProcessState.Step
+                                .of(PanoProcessState.StepType.SCALE_LEVEL)
+                                .with(PanoProcessState.ValueType.LEVEL_INDEX, levelIndex)
+                                .with(PanoProcessState.ValueType.DURATION_MS, downscaleChronograph.getDurationMs())
+                                .with(PanoProcessState.ValueType.DURATION_HUMAN, downscaleChronograph.getDurationForHuman()));
                     }
                 }
 
@@ -425,17 +439,15 @@ public class App {
 
         // Viewer - Pannellum
         if (config.getViewerConfig().getPannellum().isEnabled()) {
-            PanellumConfig pannellumConfig = new PanellumConfig(panoInfo.getMaxLevelIndex() + 1, panoInfo.getSourceFaceEdge(), tileEdge);
+            PannellumConfig pannellumConfig = new PannellumConfig(
+                    panoInfo.getMaxLevelIndex() + 1,
+                    panoInfo.getSourceFaceEdge(),
+                    tileEdge,
+                    panoDescription);
 
             // target File
             File viewerPannellumFile = new File(outputFolder, config.getViewerConfig().getPannellum().getTarget());
             LOG.info("Render Pannellum html: '{}'", viewerPannellumFile.getAbsolutePath());
-
-            // title
-            String viewerPannellumTitle = config.getViewerConfig().getPannellum().getPageTitle();
-            if (StringUtils.isNotBlank(viewerPannellumTitle)) {
-                pannellumConfig.setHtmlTitle(viewerPannellumTitle);
-            }
 
             // css
             List<URL> cssFiles = config.getViewerConfig().getPannellum().getCssFiles();
@@ -468,17 +480,11 @@ public class App {
 
         // Viewer - Marzipano
         if (config.getViewerConfig().getMarzipano().isEnabled()) {
-            MarzipanoConfig marzipanoConfig = new MarzipanoConfig(panoInfo);
+            MarzipanoConfig marzipanoConfig = new MarzipanoConfig(panoInfo, panoDescription);
 
             // target file
             File viewerMarzipanoFile = new File(outputFolder, config.getViewerConfig().getMarzipano().getTarget());
             LOG.info("Render Marzipano html: '{}'", viewerMarzipanoFile.getAbsolutePath());
-
-            // title
-            String viewerMarzipanoTitle = config.getViewerConfig().getMarzipano().getPageTitle();
-            if (StringUtils.isNotBlank(viewerMarzipanoTitle)) {
-                marzipanoConfig.setHtmlTitle(viewerMarzipanoTitle);
-            }
 
             // css
             List<URL> cssFiles = config.getViewerConfig().getMarzipano().getCssFiles();

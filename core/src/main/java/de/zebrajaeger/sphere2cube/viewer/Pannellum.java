@@ -13,9 +13,21 @@ public class Pannellum extends Viewer {
                      <head>
                          <meta charset="utf-8">
                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                         <meta property="og:title" content="{{htmlTitle}}"/>
-                         <meta property="og:image" content="{{previewPath}}"/>
-                         <title>{{htmlTitle}}</title>
+                         
+                         <meta property="og:title" content="{{description.title}}"/>
+                         <meta property="og:type" content="{{description.type}}"/>
+                         {{#description.description}}
+                         <meta property="og:description" content="{{description.description}}"/>
+                         {{/description.description}}
+                         <meta property="og:image" content="{{description.preview.path}}"/>
+                         <meta property="og:alt" content="{{description.preview.alt}}"/>
+                         {{#description.location}}
+                         <meta property="og:latitude" content="{{latitude}}">
+                         <meta property="og:longitude" content="{{longitude}}">
+                         {{/description.location}}
+                         
+                         <title>{{description.title}}</title>
+                         
                          {{#js}}
                          <script type="text/javascript" src="{{.}}"></script>
                          {{/js}}
@@ -36,7 +48,7 @@ public class Pannellum extends Viewer {
                      </head>
                      <body>
                     
-                     <div id="panorama" class="panorma"/>
+                     <div id="panorama" class="panorma"></div>
                     
                      <script>
                          function checkSensor() {
@@ -74,7 +86,7 @@ public class Pannellum extends Viewer {
                                      "maxLevel": {{levelCount}},
                                      "cubeResolution": {{targetImageSize}},
                                  },
-                                 "preview": "{{previewPath}}",
+                                 "preview": "{{description.preview.path}}",
                                  "autoLoad": {{autoLoad}},
                                  "minYaw": {{xmin}},
                                  "maxYaw": {{xmax}},

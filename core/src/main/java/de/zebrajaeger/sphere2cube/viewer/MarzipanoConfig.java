@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.zebrajaeger.sphere2cube.pano.PanoInfo;
 import de.zebrajaeger.sphere2cube.pano.PanoLevel;
+import de.zebrajaeger.sphere2cube.panodescription.PanoDescription;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -12,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MarzipanoConfig extends ViewerConfig {
-    private String htmlTitle = "sphere2cube-java with Marzipano";
-
     private String levels;
     private String tileFileType = "png";
     private String previewPath = "preview_scaled.jpg";
@@ -43,7 +42,9 @@ public class MarzipanoConfig extends ViewerConfig {
         }
     }
 
-    public MarzipanoConfig(PanoInfo panoInfo) {
+    public MarzipanoConfig(PanoInfo panoInfo, PanoDescription panoDescription) {
+        super(panoDescription);
+
         List<Level> temp = new ArrayList<>();
         for (PanoLevel l : panoInfo.getLevels()) {
             temp.add(new Level(l.getTileEdge(), l.getFaceEdge()));
@@ -54,14 +55,6 @@ public class MarzipanoConfig extends ViewerConfig {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Config", e);
         }
-    }
-
-    public String getHtmlTitle() {
-        return htmlTitle;
-    }
-
-    public void setHtmlTitle(String htmlTitle) {
-        this.htmlTitle = htmlTitle;
     }
 
     public String getLevels() {
