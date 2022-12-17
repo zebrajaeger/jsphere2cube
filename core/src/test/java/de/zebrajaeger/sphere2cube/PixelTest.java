@@ -61,7 +61,7 @@ class PixelTest {
     @Test
     void panoInfo() throws IOException, InterruptedException {
         Img img1 = new Img(new File("/home/l/Dokumente/sphere2cube/7Lo6s.jpg"));
-        EquirectangularImage source = EquirectangularImage.of(img1, 360d);
+        EquirectangularImage source = EquirectangularImage.of(img1, 360d, Pixel.black());
 
         PanoInfo panoInfo = PanoUtils.calcPanoInfo(source, 100);
         System.out.println(panoInfo);
@@ -70,7 +70,7 @@ class PixelTest {
     @Test
     void cubeMapImage() throws IOException, InterruptedException {
         Img img1 = new Img(new File("/home/l/Dokumente/sphere2cube/7Lo6s.jpg"));
-        EquirectangularImage source = EquirectangularImage.of(img1, 360d);
+        EquirectangularImage source = EquirectangularImage.of(img1, 360d, Pixel.black());
 
         CubeMapImage cubeMapImage = new CubeMapImage(500);
         for (Face face : Face.values()) {
