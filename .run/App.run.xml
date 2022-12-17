@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="App" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="de.zebrajaeger.sphere2cube.App" />
-    <module name="sphere2cube-java-core" />
+    <module name="sphere2cube" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="de.zebrajaeger.sphere2cube.config.*" />
