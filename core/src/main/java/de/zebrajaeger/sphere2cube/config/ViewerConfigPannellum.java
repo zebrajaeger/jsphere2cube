@@ -1,7 +1,8 @@
 package de.zebrajaeger.sphere2cube.config;
 
 public class ViewerConfigPannellum extends ViewerConfigBase {
-    public ViewerConfigPannellum() {
-        super("index.p.html");
-    }
+
+  public ViewerConfigPannellum() {
+    super("index.p.html", "index.p.template.html");
+  }
 }

@@ -21,8 +21,10 @@ import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.tiles.TileSaveJob;
 import de.zebrajaeger.sphere2cube.viewer.Marzipano;
 import de.zebrajaeger.sphere2cube.viewer.MarzipanoConfig;
+import de.zebrajaeger.sphere2cube.viewer.MarzipanoTemplate;
 import de.zebrajaeger.sphere2cube.viewer.Pannellum;
 import de.zebrajaeger.sphere2cube.viewer.PannellumConfig;
+import de.zebrajaeger.sphere2cube.viewer.PannellumTemplate;
 import de.zebrajaeger.sphere2cube.viewer.ViewerUtils;
 import de.zebrajaeger.sphere2cube.zip.Zipper;
 import java.io.File;
@@ -480,11 +482,6 @@ public class App {
           tileEdge,
           panoDescription);
 
-      // target File
-      File viewerPannellumFile = new File(outputFolder,
-          config.getViewerConfig().getPannellum().getTarget());
-      LOG.info("Render Pannellum html: '{}'", viewerPannellumFile.getAbsolutePath());
-
       // css
       List<URL> cssFiles = config.getViewerConfig().getPannellum().getCssFiles();
       if (cssFiles != null) {
@@ -506,22 +503,38 @@ public class App {
         });
       });
 
-      Pannellum pannellum = new Pannellum();
-      String html = pannellum.render(pannellumConfig);
-      FileUtils.write(viewerPannellumFile, html, StandardCharsets.UTF_8);
-      result.addStep(PanoProcessState.Step
-          .of(PanoProcessState.StepType.VIEWER_PANNELLUM)
-          .with(PanoProcessState.ValueType.FILE, viewerPannellumFile));
+      {
+        // pannellum target File
+        File viewerPannellumFile = new File(outputFolder,
+            config.getViewerConfig().getPannellum().getTarget());
+        LOG.info("Render Pannellum html: '{}'", viewerPannellumFile.getAbsolutePath());
+
+        Pannellum pannellum = new Pannellum();
+        String html = pannellum.render(pannellumConfig);
+        FileUtils.write(viewerPannellumFile, html, StandardCharsets.UTF_8);
+        result.addStep(PanoProcessState.Step
+            .of(PanoProcessState.StepType.VIEWER_PANNELLUM)
+            .with(PanoProcessState.ValueType.FILE, viewerPannellumFile));
+      }
+      {
+        // panellum target template  File
+        File viewerPannellumTemplateFile = new File(outputFolder,
+            config.getViewerConfig().getPannellum().getTemplateTarget());
+        LOG.info("Render PannellumTemplate html: '{}'",
+            viewerPannellumTemplateFile.getAbsolutePath());
+
+        PannellumTemplate pannellum = new PannellumTemplate();
+        String html = pannellum.render(pannellumConfig);
+        FileUtils.write(viewerPannellumTemplateFile, html, StandardCharsets.UTF_8);
+        result.addStep(PanoProcessState.Step
+            .of(PanoProcessState.StepType.VIEWER_PANNELLUM)
+            .with(PanoProcessState.ValueType.FILE, viewerPannellumTemplateFile));
+      }
     }
 
     // Viewer - Marzipano
     if (config.getViewerConfig().getMarzipano().isEnabled()) {
       MarzipanoConfig marzipanoConfig = new MarzipanoConfig(panoInfo, panoDescription);
-
-      // target file
-      File viewerMarzipanoFile = new File(outputFolder,
-          config.getViewerConfig().getMarzipano().getTarget());
-      LOG.info("Render Marzipano html: '{}'", viewerMarzipanoFile.getAbsolutePath());
 
       // css
       List<URL> cssFiles = config.getViewerConfig().getMarzipano().getCssFiles();
@@ -535,12 +548,33 @@ public class App {
         marzipanoConfig.getJsFiles().addAll(ViewerUtils.download(jsFiles, outputFolder));
       }
 
-      Marzipano marzipano = new Marzipano();
-      String html = marzipano.render(marzipanoConfig);
-      FileUtils.write(viewerMarzipanoFile, html, StandardCharsets.UTF_8);
-      result.addStep(PanoProcessState.Step
-          .of(PanoProcessState.StepType.VIEWER_MARZIPANO)
-          .with(PanoProcessState.ValueType.FILE, viewerMarzipanoFile));
+      {
+        // target file
+        File viewerMarzipanoFile = new File(outputFolder,
+            config.getViewerConfig().getMarzipano().getTarget());
+        LOG.info("Render Marzipano html: '{}'", viewerMarzipanoFile.getAbsolutePath());
+
+        Marzipano marzipano = new Marzipano();
+        String html = marzipano.render(marzipanoConfig);
+        FileUtils.write(viewerMarzipanoFile, html, StandardCharsets.UTF_8);
+        result.addStep(PanoProcessState.Step
+            .of(PanoProcessState.StepType.VIEWER_MARZIPANO)
+            .with(PanoProcessState.ValueType.FILE, viewerMarzipanoFile));
+      }
+      {
+        // target template file
+        File viewerMarzipanoTemplateFile = new File(outputFolder,
+            config.getViewerConfig().getMarzipano().getTemplateTarget());
+        LOG.info("Render MarzipanoTemplate html: '{}'",
+            viewerMarzipanoTemplateFile.getAbsolutePath());
+
+        MarzipanoTemplate marzipanoTemplate = new MarzipanoTemplate();
+        String html = marzipanoTemplate.render(marzipanoConfig);
+        FileUtils.write(viewerMarzipanoTemplateFile, html, StandardCharsets.UTF_8);
+        result.addStep(PanoProcessState.Step
+            .of(PanoProcessState.StepType.VIEWER_MARZIPANO)
+            .with(PanoProcessState.ValueType.FILE, viewerMarzipanoTemplateFile));
+      }
     }
 
     // Archive
