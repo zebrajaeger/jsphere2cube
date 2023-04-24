@@ -40,7 +40,7 @@ public class Marzipano extends Viewer {
              {{/description.location}}
              {{#facebookAppId}}
              <meta property="fb:app_id" content="{{facebookAppId}}">
-             {{#facebookAppId}}
+             {{/facebookAppId}}
              <meta property="zj:isTemplate" content="{{template}}">
              {{meta}}
              
