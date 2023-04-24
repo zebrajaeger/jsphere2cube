@@ -5,10 +5,11 @@ import de.zebrajaeger.sphere2cube.Stringable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Data()
-@EqualsAndHashCode(callSuper=false)
-public class ViewerConfig extends Stringable {
+@Data
+public class ViewerConfig{
 
+  @JsonProperty("facebookAppId")
+  private String facebookAppId = "966242223397117";
   @JsonProperty("pannellum")
   private ViewerConfigPannellum pannellum = new ViewerConfigPannellum();
   @JsonProperty("marzipano")

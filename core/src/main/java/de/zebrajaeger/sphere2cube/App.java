@@ -207,7 +207,7 @@ public class App {
     // +===============================================================
     String descriptionFileName = FilenameUtils.getBaseName(inputImageFile.getName()) + ".json";
     File descriptionFile = new File(inputImageFile.getParentFile(), descriptionFileName);
-    PanoDescription panoDescription = null;
+    PanoDescription panoDescription;
     if (descriptionFile.exists()) {
       System.out.println("Found description file: '" + descriptionFile.getAbsolutePath() + "'");
       JsonUtils.validate(descriptionFile, "panodescription.schema.json");
@@ -482,6 +482,8 @@ public class App {
           tileEdge,
           panoDescription);
 
+      pannellumConfig.setFacebookAppId( config.getViewerConfig().getFacebookAppId());
+
       // css
       List<URL> cssFiles = config.getViewerConfig().getPannellum().getCssFiles();
       if (cssFiles != null) {
@@ -510,6 +512,7 @@ public class App {
         LOG.info("Render Pannellum html: '{}'", viewerPannellumFile.getAbsolutePath());
 
         Pannellum pannellum = new Pannellum();
+        pannellumConfig.setTemplate(false);
         String html = pannellum.render(pannellumConfig);
         FileUtils.write(viewerPannellumFile, html, StandardCharsets.UTF_8);
         result.addStep(PanoProcessState.Step
@@ -524,6 +527,7 @@ public class App {
             viewerPannellumTemplateFile.getAbsolutePath());
 
         PannellumTemplate pannellum = new PannellumTemplate();
+        pannellumConfig.setTemplate(true);
         String html = pannellum.render(pannellumConfig);
         FileUtils.write(viewerPannellumTemplateFile, html, StandardCharsets.UTF_8);
         result.addStep(PanoProcessState.Step
@@ -535,6 +539,8 @@ public class App {
     // Viewer - Marzipano
     if (config.getViewerConfig().getMarzipano().isEnabled()) {
       MarzipanoConfig marzipanoConfig = new MarzipanoConfig(panoInfo, panoDescription);
+
+      marzipanoConfig.setFacebookAppId( config.getViewerConfig().getFacebookAppId());
 
       // css
       List<URL> cssFiles = config.getViewerConfig().getMarzipano().getCssFiles();
@@ -555,6 +561,7 @@ public class App {
         LOG.info("Render Marzipano html: '{}'", viewerMarzipanoFile.getAbsolutePath());
 
         Marzipano marzipano = new Marzipano();
+        marzipanoConfig.setTemplate(false);
         String html = marzipano.render(marzipanoConfig);
         FileUtils.write(viewerMarzipanoFile, html, StandardCharsets.UTF_8);
         result.addStep(PanoProcessState.Step
@@ -569,6 +576,7 @@ public class App {
             viewerMarzipanoTemplateFile.getAbsolutePath());
 
         MarzipanoTemplate marzipanoTemplate = new MarzipanoTemplate();
+        marzipanoConfig.setTemplate(true);
         String html = marzipanoTemplate.render(marzipanoConfig);
         FileUtils.write(viewerMarzipanoTemplateFile, html, StandardCharsets.UTF_8);
         result.addStep(PanoProcessState.Step

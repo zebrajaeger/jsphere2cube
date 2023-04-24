@@ -38,8 +38,13 @@ public class Marzipano extends Viewer {
              <meta property="og:latitude" content="{{latitude}}">
              <meta property="og:longitude" content="{{longitude}}">
              {{/description.location}}
+             {{#facebookAppId}}
+             <meta property="fb:app_id" content="{{facebookAppId}}">
+             {{#facebookAppId}}
+             <meta property="zj:isTemplate" content="{{template}}">
              {{meta}}
              
+             <!-- Additional Meta Tags -->
              <title>{{description.title}}</title>
                  
             {{#js}}

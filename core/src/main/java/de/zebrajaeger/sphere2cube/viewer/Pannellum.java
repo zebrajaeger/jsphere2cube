@@ -33,7 +33,10 @@ public class Pannellum extends Viewer {
                      <meta property="og:latitude" content="{{latitude}}">
                      <meta property="og:longitude" content="{{longitude}}">
                      {{/description.location}}
-                     
+                     {{#facebookAppId}}
+                     <meta property="fb:app_id" content="{{facebookAppId}}">
+                     {{#facebookAppId}}
+                     <meta property="zj:isTemplate" content="{{template}}">
                      <!-- Additional Meta Tags -->
                      {{meta}}
                  
