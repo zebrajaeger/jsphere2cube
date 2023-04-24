@@ -14,6 +14,6 @@ public class PannellumTemplate extends Pannellum {
     public void modifyValues(ViewerConfig config, Map<String, Object> values) {
         String descriptionPreviewPath = (String) getIfExists(values, DESCRIPTION_PREVIEW_PATH);
         setIfExists(values, DESCRIPTION_PREVIEW_PATH, "{{serverUrl}}{{currentPath}}/" + descriptionPreviewPath);
-        values.put("meta", "<meta property=\"og:url\" content=\"{{serverUrl}}\">");
+        values.put("meta", "<meta property=\"og:url\" content=\"{{url}}\">");
     }
 }
