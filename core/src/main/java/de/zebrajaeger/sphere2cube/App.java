@@ -138,7 +138,7 @@ public class App {
     }
   }
 
-  private static File toAboluteFile(File root, String path) {
+  private static File toAbsoluteFile(File root, String path) {
     File inputImageFile = new File(path);
     if (!inputImageFile.isAbsolute()) {
       inputImageFile = new File(root, path);
@@ -158,7 +158,7 @@ public class App {
       Pixel backgroundColor)
       throws IOException, InterruptedException, ExecutionException {
     Chronograph appChronograph = Chronograph.start();
-    File outputFolder = toAboluteFile(root, config.getOutputFolder());
+    File outputFolder = toAbsoluteFile(root, config.getOutputFolder());
 
     PanoProcessState result = new PanoProcessState(outputFolder);
 
@@ -169,7 +169,7 @@ public class App {
     boolean debug = config.isDebug();
 
     // Source
-    File inputImageFile = toAboluteFile(root, config.getInputConfig().getInputImageFile());
+    File inputImageFile = toAbsoluteFile(root, config.getInputConfig().getInputImageFile());
 
     // Preview - CubeMap
     boolean previewCubeEnabled = config.getPreviewsConfig().getCubeMapPreview().isEnabled();
