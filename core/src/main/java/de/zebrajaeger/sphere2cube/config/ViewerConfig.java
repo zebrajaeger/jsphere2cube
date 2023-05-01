@@ -1,5 +1,6 @@
 package de.zebrajaeger.sphere2cube.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.zebrajaeger.sphere2cube.Stringable;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class ViewerConfig{
   @JsonProperty("marzipano")
   private ViewerConfigMarzipano marzipano = new ViewerConfigMarzipano();
 
+  @JsonIgnore
   public boolean isEnabled() {
     return pannellum.isEnabled() || marzipano.isEnabled();
   }

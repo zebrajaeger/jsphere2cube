@@ -1,6 +1,5 @@
 package de.zebrajaeger.sphere2cube.viewer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import java.util.Map;
@@ -14,8 +13,7 @@ public abstract class Viewer {
   }
 
   public String render(ViewerConfig config) {
-    @SuppressWarnings("unchecked")
-    Map<String, Object> values = new ObjectMapper().convertValue(config, Map.class);
+    Map<String, Object> values = new ObjectMapper().map(config);
     values.put("css", config.getCssFiles().stream().map(EmbeddedFile::getEmbeddedUrl).toArray());
     values.put("js", config.getJsFiles().stream().map(EmbeddedFile::getEmbeddedUrl).toArray());
     modifyValues(config, values);

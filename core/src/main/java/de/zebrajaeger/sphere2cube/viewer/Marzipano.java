@@ -28,7 +28,7 @@ public class Marzipano extends Viewer {
              <meta charset="utf-8">
             
              <meta property="og:title" content="{{description.title}}"/>
-             <meta property="og:type" content="{{description.type}}"/>
+             <meta property="og:type" content="website"/>
              {{#description.description}}
              <meta property="og:description" content="{{description.description}}"/>
              {{/description.description}}

@@ -1,31 +1,32 @@
-
 {
   "debug": false,
   "source": {
-    "path": "C:\\tmp\\2023-04-06-Klein Flottbek\\[Group 1]-IMG_20230406_134024_IMG_20230406_134734-103 images.psd"
+    "path": "CHANGE_ME"
   },
-  "target": "./build2",
+  "target": "CHANGE_ME",
   "preview": {
     "cubemap": {
-      "enabled": false,
+      "enabled": true,
       "edge": 200,
-      "target": "preview_cube.jpg"
+      "target": "preview_cube.jpg",
+      "maxSize": 300000
     },
     "equirectangular": {
-      "enabled": false,
-      "edge": 800,
-      "target": "preview_equirectangular.jpg"
+      "enabled": true,
+      "edge": 1200,
+      "target": "preview_equirectangular.jpg",
+      "maxSize": 300000
     },
     "scaled": {
-      "enabled": false,
-      "edge": 800,
-      "maxSize": 250000,
+      "enabled": true,
+      "edge": 1200,
+      "maxSize": 300000,
       "target": "preview_scaled.jpg"
     }
   },
   "cubemap": {
     "tiles": {
-      "enabled": false,
+      "enabled": true,
       "tileEdge": 512,
       "target": "{{levelCount}}/{{faceNameShortLowerCase}}{{xIndex}}_{{yIndex}}.png"
     },
@@ -35,6 +36,7 @@
     }
   },
   "viewer": {
+    "facebookAppId": "966242223397117",
     "pannellum": {
       "enabled": true,
       "target": "index.p.html",
@@ -57,7 +59,7 @@
     }
   },
   "archive": {
-    "enabled": false,
+    "enabled": true,
     "target": "pano.zip"
   }
 }

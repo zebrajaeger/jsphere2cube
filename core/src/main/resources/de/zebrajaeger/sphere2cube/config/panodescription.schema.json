@@ -12,26 +12,18 @@
         "description": {
           "type": "string"
         },
-        "type": {
-          "type": "string"
-        },
-        "preview": {
-          "$ref": "#/definitions/Preview"
-        },
         "location": {
           "$ref": "#/definitions/Location"
         }
       },
       "required": [
         "description",
-        "preview",
-        "title",
-        "type"
+        "title"
       ],
       "title": "PanoramaDescription"
     },
     "Location": {
-      "type": "object",
+      "type": ["object", "null"],
       "additionalProperties": false,
       "properties": {
         "latitude": {
@@ -46,23 +38,6 @@
         "longitude"
       ],
       "title": "Location"
-    },
-    "Preview": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "path": {
-          "type": "string"
-        },
-        "alt": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "alt",
-        "path"
-      ],
-      "title": "Preview"
     }
   }
 }

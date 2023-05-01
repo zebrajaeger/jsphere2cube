@@ -23,7 +23,7 @@ public class Pannellum extends Viewer {
                      
                      <!-- Facebook Meta Tags -->
                      <meta property="og:title" content="{{description.title}}"/>
-                     <meta property="og:type" content="{{description.type}}"/>
+                     <meta property="og:type" content="website"/>
                      {{#description.description}}
                      <meta property="og:description" content="{{description.description}}"/>
                      {{/description.description}}
@@ -107,10 +107,10 @@ public class Pannellum extends Viewer {
                             },
                                  "preview": "{{description.preview.path}}",
                                  "autoLoad": {{autoLoad}},
-                                 "minYaw": {{xmin}},
-                                 "maxYaw": {{xmax}},
-                                 "minPitch": {{ymin}},
-                                 "maxPitch": {{ymax}},
+                                 "minYaw": {{xMin}},
+                                 "maxYaw": {{xMax}},
+                                 "minPitch": {{yMin}},
+                                 "maxPitch": {{yMax}},
                         }
                         cfg['orientationOnByDefault'] = av;
                         if (!av) {

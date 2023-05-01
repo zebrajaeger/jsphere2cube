@@ -135,6 +135,9 @@
     "viewer": {
       "type": "object",
       "properties": {
+        "facebookAppId": {
+          "type": "string"
+        },
         "pannellum": {
           "type": "object",
           "properties": {

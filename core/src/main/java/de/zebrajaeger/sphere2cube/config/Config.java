@@ -15,7 +15,7 @@ public class Config extends Stringable {
 
     private boolean debug;
     @JsonIgnore
-    private File configFile = null;
+    private final File configFile = null;
     @JsonIgnore
     private SaveConfig saveConfig = new SaveConfig();
     @JsonProperty("source")
@@ -38,6 +38,10 @@ public class Config extends Stringable {
 
     public static Config of(File configFile) throws IOException {
         return JsonUtils.loadJson(configFile, Config.class, SPHERE_2_CUBE_SCHEMA_JSON);
+    }
+
+    public static Config of(String json) throws IOException {
+        return JsonUtils.loadJson(json, Config.class, SPHERE_2_CUBE_SCHEMA_JSON);
     }
 
     public static Config of(String[] args) throws ParseException, IOException {
