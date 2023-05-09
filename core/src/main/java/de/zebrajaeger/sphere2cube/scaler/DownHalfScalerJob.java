@@ -1,8 +1,8 @@
 package de.zebrajaeger.sphere2cube.scaler;
 
-import de.zebrajaeger.sphere2cube.Pixel;
-import de.zebrajaeger.sphere2cube.ReadableImage;
-import de.zebrajaeger.sphere2cube.WriteableImage;
+import de.zebrajaeger.sphere2cube.image.Pixel;
+import de.zebrajaeger.sphere2cube.image.ReadableImage;
+import de.zebrajaeger.sphere2cube.image.WriteableImage;
 import de.zebrajaeger.sphere2cube.multithreading.Job;
 import net.jafama.FastMath;
 

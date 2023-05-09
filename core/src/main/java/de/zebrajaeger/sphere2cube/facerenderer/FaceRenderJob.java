@@ -1,10 +1,12 @@
 package de.zebrajaeger.sphere2cube.facerenderer;
 
 import de.zebrajaeger.sphere2cube.Face;
-import de.zebrajaeger.sphere2cube.Pixel;
-import de.zebrajaeger.sphere2cube.WriteableImage;
+import de.zebrajaeger.sphere2cube.image.Pixel;
+import de.zebrajaeger.sphere2cube.image.WriteableImage;
 import de.zebrajaeger.sphere2cube.multithreading.Job;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class FaceRenderJob extends Job {
     private final FaceRenderer faceRenderer;
     private final Face face;
@@ -31,7 +33,7 @@ public class FaceRenderJob extends Job {
                 target.setPixel(x, lineToRender, pixel);
             }
         } catch (Throwable t) {
-            System.out.println(t);
+            log.error("Face renderer", t);
         }
     }
 }

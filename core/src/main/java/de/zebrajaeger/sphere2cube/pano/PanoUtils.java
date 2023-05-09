@@ -1,6 +1,6 @@
 package de.zebrajaeger.sphere2cube.pano;
 
-import de.zebrajaeger.sphere2cube.EquirectangularImage;
+import de.zebrajaeger.sphere2cube.image.EquirectangularImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

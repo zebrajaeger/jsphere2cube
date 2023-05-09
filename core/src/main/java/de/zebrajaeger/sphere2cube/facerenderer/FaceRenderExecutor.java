@@ -1,8 +1,8 @@
 package de.zebrajaeger.sphere2cube.facerenderer;
 
-import de.zebrajaeger.sphere2cube.EquirectangularImage;
+import de.zebrajaeger.sphere2cube.image.EquirectangularImage;
 import de.zebrajaeger.sphere2cube.Face;
-import de.zebrajaeger.sphere2cube.WriteableImage;
+import de.zebrajaeger.sphere2cube.image.WriteableImage;
 import de.zebrajaeger.sphere2cube.multithreading.MaxJobQueueExecutor;
 import de.zebrajaeger.sphere2cube.progress.Progress;
 

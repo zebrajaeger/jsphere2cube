@@ -1,4 +1,4 @@
-package de.zebrajaeger.sphere2cube;
+package de.zebrajaeger.sphere2cube.image;
 
 import net.jafama.FastMath;
 
@@ -8,11 +8,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class Img implements ReadableImage, WriteableImage {
-    private int width;
-    private int height;
-    private byte[][] r;
-    private byte[][] g;
-    private byte[][] b;
+    private final int width;
+    private final int height;
+    private final byte[][] r;
+    private final byte[][] g;
+    private final byte[][] b;
 
     public static Img rectangular(int edge) {
         return new Img(edge, edge);

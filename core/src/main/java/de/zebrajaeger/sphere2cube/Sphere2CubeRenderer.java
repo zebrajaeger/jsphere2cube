@@ -2,6 +2,11 @@ package de.zebrajaeger.sphere2cube;
 
 import de.zebrajaeger.sphere2cube.config.Config;
 import de.zebrajaeger.sphere2cube.facerenderer.FaceRenderExecutor;
+import de.zebrajaeger.sphere2cube.image.CubeMapImage;
+import de.zebrajaeger.sphere2cube.image.EquirectangularImage;
+import de.zebrajaeger.sphere2cube.image.Img;
+import de.zebrajaeger.sphere2cube.image.Pixel;
+import de.zebrajaeger.sphere2cube.image.ReadableImage;
 import de.zebrajaeger.sphere2cube.metadata.ViewCalculator;
 import de.zebrajaeger.sphere2cube.multithreading.MaxJobQueueExecutor;
 import de.zebrajaeger.sphere2cube.names.CubeFaceNameGenerator;
@@ -17,6 +22,10 @@ import de.zebrajaeger.sphere2cube.runconfig.LastRun;
 import de.zebrajaeger.sphere2cube.scaler.BilinearScaler;
 import de.zebrajaeger.sphere2cube.scaler.DownHalfScaler;
 import de.zebrajaeger.sphere2cube.tiles.TileSaveJob;
+import de.zebrajaeger.sphere2cube.util.Chronograph;
+import de.zebrajaeger.sphere2cube.util.HashUtils;
+import de.zebrajaeger.sphere2cube.util.ImgUtils;
+import de.zebrajaeger.sphere2cube.util.JsonUtils;
 import de.zebrajaeger.sphere2cube.viewer.Marzipano;
 import de.zebrajaeger.sphere2cube.viewer.MarzipanoConfig;
 import de.zebrajaeger.sphere2cube.viewer.MarzipanoTemplate;
@@ -69,6 +78,10 @@ public class Sphere2CubeRenderer {
     // Source
     File inputImageFile = toAbsoluteFile(root, config.getInputConfig().getInputImageFile());
 
+    // Description
+    boolean descriptionEnabled = config.getDescriptionConfig().isEnabled();
+    File descriptionTarget = new File(outputFolder, "pano.description.json");
+
     // Preview - CubeMap
     boolean previewCubeEnabled = config.getPreviewsConfig().getCubeMapPreview().isEnabled();
     int previewCubeEdge = config.getPreviewsConfig().getCubeMapPreview().getEdge();
@@ -103,7 +116,8 @@ public class Sphere2CubeRenderer {
     // +===============================================================
     // | Read Description
     // +===============================================================
-    String descriptionFileName = FilenameUtils.getBaseName(inputImageFile.getName()) + ".description.json";
+    String descriptionFileName =
+        FilenameUtils.getBaseName(inputImageFile.getName()) + ".description.json";
     File descriptionFile = new File(inputImageFile.getParentFile(), descriptionFileName);
     PanoDescription panoDescription;
     if (descriptionFile.exists()) {
@@ -180,6 +194,24 @@ public class Sphere2CubeRenderer {
     EquirectangularImage source = EquirectangularImage.of(sourceImage, inputImageHorizontalAngel,
         inputImageVerticalOffset, backgroundColor);
     PanoInfo panoInfo = PanoUtils.calcPanoInfo(source, tileEdge);
+
+    // +===============================================================
+    // | Description
+    // +===============================================================
+    if (descriptionEnabled) {
+      log.info("Write description file: {}", descriptionTarget.getAbsolutePath());
+      Chronograph descriptionChronograph = Chronograph.start();
+      FileUtils.forceMkdirParent(descriptionTarget);
+      JsonUtils.saveJson(descriptionTarget, panoDescription);
+      log.info("Wrote description file in {}", descriptionChronograph.stop());
+
+      result.addStep(PanoProcessState.Step
+          .of(PanoProcessState.StepType.DESCRIPTION)
+          .with(PanoProcessState.ValueType.FILE, descriptionTarget)
+          .with(PanoProcessState.ValueType.DURATION_MS, descriptionChronograph.getDurationMs())
+          .with(PanoProcessState.ValueType.DURATION_HUMAN,
+              descriptionChronograph.getDurationForHuman()));
+    }
 
     // +===============================================================
     // | Preview(s)
@@ -396,10 +428,8 @@ public class Sphere2CubeRenderer {
 
       viewCalculator.ifPresent(vc -> {
         vc.createPanoView().ifPresent(pv -> {
-//          pannellumConfig.setXMin(pv.getFovX1());
-//          pannellumConfig.setXMax(pv.getFovX2());
-          pannellumConfig.setXMin(-pv.getFovX()/2);
-          pannellumConfig.setXMax(pv.getFovX()/2);
+          pannellumConfig.setXMin(-pv.getFovX() / 2);
+          pannellumConfig.setXMax(pv.getFovX() / 2);
 
           pannellumConfig.setYMin(pv.getFovY1Inv());
           pannellumConfig.setYMax(pv.getFovY2Inv());

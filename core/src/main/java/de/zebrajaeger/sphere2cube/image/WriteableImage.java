@@ -1,4 +1,6 @@
-package de.zebrajaeger.sphere2cube;
+package de.zebrajaeger.sphere2cube.image;
+
+import de.zebrajaeger.sphere2cube.image.Pixel;
 
 public interface WriteableImage {
     int getWidth();

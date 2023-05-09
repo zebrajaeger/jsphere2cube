@@ -22,7 +22,7 @@ package de.zebrajaeger.sphere2cube.psd;
  * #L%
  */
 
-import de.zebrajaeger.sphere2cube.ResourceSection;
+import de.zebrajaeger.sphere2cube.image.ResourceSection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

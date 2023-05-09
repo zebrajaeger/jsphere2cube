@@ -1,4 +1,4 @@
-package de.zebrajaeger.sphere2cube;
+package de.zebrajaeger.sphere2cube.image;
 
 public class EquirectangularImage implements ReadableImage {
 
@@ -12,7 +12,7 @@ public class EquirectangularImage implements ReadableImage {
   private final int insideY2;
 
 
-  static EquirectangularImage of(ReadableImage embeddedImage, double embeddedWidthAngel,
+  public static EquirectangularImage of(ReadableImage embeddedImage, double embeddedWidthAngel,
       double verticalOffset, Pixel backgroundColor) {
     int fullWidth = (int) (360d * embeddedImage.getWidth() / embeddedWidthAngel);
     int fullHeight = fullWidth / 2;
@@ -26,7 +26,7 @@ public class EquirectangularImage implements ReadableImage {
   }
 
   @Deprecated
-  static EquirectangularImage of(ReadableImage embeddedImage, double embeddedWidthAngel,
+  public static EquirectangularImage of(ReadableImage embeddedImage, double embeddedWidthAngel,
       Pixel backgroundColor) {
     int fullWidth = (int) (360d * embeddedImage.getWidth() / embeddedWidthAngel);
     int fullHeight = fullWidth / 2;

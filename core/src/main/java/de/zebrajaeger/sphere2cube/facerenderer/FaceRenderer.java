@@ -1,8 +1,8 @@
 package de.zebrajaeger.sphere2cube.facerenderer;
 
-import de.zebrajaeger.sphere2cube.EquirectangularImage;
+import de.zebrajaeger.sphere2cube.image.EquirectangularImage;
 import de.zebrajaeger.sphere2cube.Face;
-import de.zebrajaeger.sphere2cube.Pixel;
+import de.zebrajaeger.sphere2cube.image.Pixel;
 import net.jafama.FastMath;
 
 

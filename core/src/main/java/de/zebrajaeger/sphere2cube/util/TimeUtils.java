@@ -1,4 +1,4 @@
-package de.zebrajaeger.sphere2cube;
+package de.zebrajaeger.sphere2cube.util;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;

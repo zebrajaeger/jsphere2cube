@@ -1,4 +1,6 @@
-package de.zebrajaeger.sphere2cube;
+package de.zebrajaeger.sphere2cube.image;
+
+import de.zebrajaeger.sphere2cube.Face;
 
 public class CubeMapImage implements ReadableImage {
     private final Img img;
@@ -49,7 +51,7 @@ public class CubeMapImage implements ReadableImage {
         };
     }
 
-    class FaceImage implements WriteableImage {
+    static class FaceImage implements WriteableImage {
         private final CubeMapImage cubeMapImage;
         private final Img img;
         private final int cubeEdgeOffset;

@@ -1,4 +1,4 @@
-package de.zebrajaeger.sphere2cube;
+package de.zebrajaeger.sphere2cube.image;
 
 public interface ReadableImage {
     int getWidth();

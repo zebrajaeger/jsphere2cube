@@ -3,7 +3,7 @@ package de.zebrajaeger.sphere2cube.runconfig;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.zebrajaeger.sphere2cube.PanoProcessState;
-import de.zebrajaeger.sphere2cube.Stringable;
+import de.zebrajaeger.sphere2cube.util.Stringable;
 
 import java.io.File;
 import java.io.IOException;

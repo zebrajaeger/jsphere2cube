@@ -2,8 +2,8 @@ package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.zebrajaeger.sphere2cube.JsonUtils;
-import de.zebrajaeger.sphere2cube.Stringable;
+import de.zebrajaeger.sphere2cube.util.JsonUtils;
+import de.zebrajaeger.sphere2cube.util.Stringable;
 import org.apache.commons.cli.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +22,8 @@ public class Config extends Stringable {
     private InputConfig inputConfig = new InputConfig();
     @JsonProperty("target")
     private String outputFolder = "build";
+    @JsonProperty("description")
+    private DescriptionConfig descriptionConfig = new DescriptionConfig();
     @JsonProperty("preview")
     PreviewsConfig previewsConfig = new PreviewsConfig();
     @JsonProperty("cubemap")
@@ -54,7 +56,7 @@ public class Config extends Stringable {
 
         // debug
         if (cmd.hasOption("d")) {
-            config.setDebug(cmd.hasOption("d"));
+            config.setDebug(cmd.hasOption("x"));
         }
 
         // common
@@ -74,6 +76,11 @@ public class Config extends Stringable {
         config.getInputConfig().setInputImageFile(cmd.getOptionValue("s"));
         if (cmd.hasOption("w")) {
             config.getInputConfig().setInputImageHorizontalAngel(Double.parseDouble(cmd.getOptionValue("w")));
+        }
+
+        // Description
+        if (cmd.hasOption("d")) {
+            config.getDescriptionConfig().setEnabled(cmd.hasOption("d"));
         }
 
         // Preview - CubeMap
@@ -154,7 +161,7 @@ public class Config extends Stringable {
         Options options = new Options();
 
         // debug
-        options.addOption("d", "debug", false, "Render debug infos. Default: false");
+        options.addOption("x", "debug", false, "Render debug infos. Default: false");
 
         // common
         options.addOption("sc", "save-config", false, "Store config");
@@ -166,6 +173,9 @@ public class Config extends Stringable {
         // source
         options.addRequiredOption("s", "source", true, "Source image");
         options.addOption("w", "width", true, "Horizontal angel of source image. Default is 360.0");
+
+        // Description File
+        options.addOption("d", "description", false, "Render description file. Default true");
 
         // Preview - CubeMap
         options.addOption("pc", "preview-cube", false, "Render cube preview image. Default true");
@@ -218,6 +228,10 @@ public class Config extends Stringable {
 
     public void setOutputFolder(String outputFolder) {
         this.outputFolder = outputFolder;
+    }
+
+    public DescriptionConfig getDescriptionConfig() {
+        return descriptionConfig;
     }
 
     public PreviewsConfig getPreviewsConfig() {

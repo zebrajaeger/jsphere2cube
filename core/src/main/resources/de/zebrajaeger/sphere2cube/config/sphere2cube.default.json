@@ -4,6 +4,9 @@
     "path": "CHANGE_ME"
   },
   "target": "CHANGE_ME",
+  "description": {
+    "enabled": true
+  },
   "preview": {
     "cubemap": {
       "enabled": true,

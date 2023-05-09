@@ -1,8 +1,8 @@
 package de.zebrajaeger.sphere2cube.metadata;
 
 import com.drew.imaging.ImageProcessingException;
-import de.zebrajaeger.sphere2cube.ReadableImage;
-import de.zebrajaeger.sphere2cube.Stringable;
+import de.zebrajaeger.sphere2cube.image.ReadableImage;
+import de.zebrajaeger.sphere2cube.util.Stringable;
 import de.zebrajaeger.sphere2cube.psd.GPanoData;
 import de.zebrajaeger.sphere2cube.psd.PSD;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -15,8 +15,8 @@ import java.util.function.Consumer;
 
 public class ViewCalculator extends Stringable {
 
-    private int sourceWidth;
-    private int sourceHeight;
+    private final int sourceWidth;
+    private final int sourceHeight;
 
     private Long targetWidth;
     private Long targetHeight;
@@ -294,16 +294,16 @@ public class ViewCalculator extends Stringable {
     }
 
     public static class PanoView {
-        private double fovX;
+        private final double fovX;
         private double fovXOffset = 0;
         private double fovX1;
         private double fovX2;
-        private double fovY;
+        private final double fovY;
         private double fovYOffset = 0;
         private double fovY1;
         private double fovY2;
-        private double fovY1Inv;
-        private double fovY2Inv;
+        private final double fovY1Inv;
+        private final double fovY2Inv;
         private double lookAtX;
         private double lookAtY;
         private double lookAtYInv;

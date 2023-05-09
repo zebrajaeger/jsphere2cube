@@ -101,6 +101,10 @@ Example (at least change source.path for input file, everything else may be ok):
   }
 }
 ```
+## Links
+
+- <https://stackoverflow.com/questions/29678510/convert-21-equirectangular-panorama-to-cube-map/29681646#29681646>
+- <https://github.com/jaxry/panorama-to-cubemap/blob/gh-pages/convert.js>
 
 ## TODO
 

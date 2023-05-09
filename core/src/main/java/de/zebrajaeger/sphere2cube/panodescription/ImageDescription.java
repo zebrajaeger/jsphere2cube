@@ -1,7 +1,7 @@
 package de.zebrajaeger.sphere2cube.panodescription;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.zebrajaeger.sphere2cube.Stringable;
+import de.zebrajaeger.sphere2cube.util.Stringable;
 
 public class ImageDescription extends Stringable {
     @JsonProperty

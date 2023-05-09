@@ -1,9 +1,7 @@
 package de.zebrajaeger.sphere2cube.psd;
 
-import de.zebrajaeger.sphere2cube.DataInputException;
-import de.zebrajaeger.sphere2cube.ExtendedInputStream;
-import de.zebrajaeger.sphere2cube.Pixel;
-import de.zebrajaeger.sphere2cube.ReadableImage;
+import de.zebrajaeger.sphere2cube.image.Pixel;
+import de.zebrajaeger.sphere2cube.image.ReadableImage;
 import de.zebrajaeger.sphere2cube.multithreading.MaxJobQueueExecutor;
 import de.zebrajaeger.sphere2cube.packbits.PackBitsDecoderJob;
 import de.zebrajaeger.sphere2cube.progress.Progress;

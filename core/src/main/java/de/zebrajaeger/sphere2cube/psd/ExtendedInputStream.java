@@ -1,4 +1,4 @@
-package de.zebrajaeger.sphere2cube;
+package de.zebrajaeger.sphere2cube.psd;
 
 import java.io.DataInputStream;
 import java.io.EOFException;

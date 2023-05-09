@@ -2,8 +2,8 @@ package de.zebrajaeger.sphere2cube.panodescription;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.zebrajaeger.sphere2cube.Stringable;
-import lombok.Data;
+import de.zebrajaeger.sphere2cube.util.Stringable;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +18,8 @@ public class PanoDescription extends Stringable {
     private String description;
     @JsonProperty
     private Geolocation location;
+    @JsonProperty
+    private List<String> tags;
 
     @JsonIgnore
     private String type = "website";

@@ -1,6 +1,6 @@
 package de.zebrajaeger.sphere2cube.runconfig;
 
-import de.zebrajaeger.sphere2cube.Stringable;
+import de.zebrajaeger.sphere2cube.util.Stringable;
 import de.zebrajaeger.sphere2cube.config.Config;
 
 import java.io.File;

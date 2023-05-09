@@ -2,6 +2,7 @@ package de.zebrajaeger.sphere2cube;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.zebrajaeger.sphere2cube.util.Stringable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,6 +19,7 @@ public class PanoProcessState extends Stringable {
     public enum StepType {
         READ_SOURCE_IMAGE,
         CALCULATE_VIEW,
+        DESCRIPTION,
         PREVIEW_CUBIC,
         PREVIEW_SCALED,
         PREVIEW_EQUIRECTANGULAR,

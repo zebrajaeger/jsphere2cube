@@ -1,14 +1,14 @@
 package de.zebrajaeger.sphere2cube;
 
 import de.zebrajaeger.sphere2cube.multithreading.Job;
-import de.zebrajaeger.sphere2cube.multithreading.JobExecutor;
 import de.zebrajaeger.sphere2cube.multithreading.MaxJobQueueExecutor;
+import de.zebrajaeger.sphere2cube.util.Chronograph;
 import org.junit.jupiter.api.Test;
 
 class ThreadTest {
 
     static class TestJob extends Job {
-        private int id;
+        private final int id;
 
         public static TestJob of(int id) {
             return new TestJob(id);
@@ -80,7 +80,4 @@ class ThreadTest {
         System.out.println(c.stop());
         System.out.println("-----------");
     }
-
-
-
 }

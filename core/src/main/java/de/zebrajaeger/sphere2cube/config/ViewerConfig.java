@@ -2,9 +2,7 @@ package de.zebrajaeger.sphere2cube.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.zebrajaeger.sphere2cube.Stringable;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
 public class ViewerConfig{

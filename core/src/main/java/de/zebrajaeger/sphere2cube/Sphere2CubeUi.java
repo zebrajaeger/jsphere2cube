@@ -2,6 +2,7 @@ package de.zebrajaeger.sphere2cube;
 
 import de.zebrajaeger.sphere2cube.config.Config;
 import de.zebrajaeger.sphere2cube.panodescription.PanoDescription;
+import de.zebrajaeger.sphere2cube.util.JsonUtils;
 import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -16,11 +17,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.swing.JFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.FileNameUtils;
@@ -29,6 +31,8 @@ import org.apache.commons.io.IOUtils;
 
 @Slf4j
 public class Sphere2CubeUi extends JFrame implements DropTargetListener {
+
+  ExecutorService executorService = Executors.newSingleThreadExecutor();
 
   public static void main(String[] args) {
     Sphere2CubeUi app = new Sphere2CubeUi();
@@ -78,7 +82,7 @@ public class Sphere2CubeUi extends JFrame implements DropTargetListener {
   private void processPanoImage(File panoImageFile)
       throws IOException, ExecutionException, InterruptedException {
     final String name = FileNameUtils.getBaseName(panoImageFile.getName());
-    File configFile = new File( panoImageFile.getParentFile(),name + ".config.json");
+    File configFile = new File(panoImageFile.getParentFile(), name + ".config.json");
     Config config;
 
     if (configFile.exists()) {
@@ -110,20 +114,19 @@ public class Sphere2CubeUi extends JFrame implements DropTargetListener {
 
     final Sphere2CubeRenderer renderer = new Sphere2CubeRenderer();
 
-    PanoProcessState panoProcessState = renderer.renderPano(
-        panoImageFile.getParentFile(),
-        config,
-        configFile,
-        Defaults.BACKGROUND_COLOR);
-
-    System.out.println(JsonUtils.toJson(panoProcessState));
+    executorService.submit(() -> {
+      try {
+        PanoProcessState panoProcessState = renderer.renderPano(
+            panoImageFile.getParentFile(),
+            config,
+            configFile,
+            Defaults.BACKGROUND_COLOR);
+        System.out.println(JsonUtils.toJson(panoProcessState));
+      } catch (IOException | InterruptedException | ExecutionException e) {
+        e.printStackTrace();
+      }
+    });
   }
-
-private Path getRelativePath(File baseFile, File fullFile){
-  Path basePath = baseFile.toPath();
-  Path absolutePath = fullFile.toPath();
-  return basePath.relativize(absolutePath).normalize();
-}
 
   @Override
   public void dropActionChanged(DropTargetDragEvent dtde) {

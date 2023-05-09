@@ -1,7 +1,6 @@
 package de.zebrajaeger.sphere2cube.config;
 
-import de.zebrajaeger.sphere2cube.Stringable;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import de.zebrajaeger.sphere2cube.util.Stringable;
 
 public class SaveConfig extends Stringable {
 

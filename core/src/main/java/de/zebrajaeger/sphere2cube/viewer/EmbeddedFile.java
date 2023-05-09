@@ -1,6 +1,6 @@
 package de.zebrajaeger.sphere2cube.viewer;
 
-import de.zebrajaeger.sphere2cube.Stringable;
+import de.zebrajaeger.sphere2cube.util.Stringable;
 
 import java.io.File;
 

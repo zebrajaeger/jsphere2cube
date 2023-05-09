@@ -1,7 +1,7 @@
 package de.zebrajaeger.sphere2cube.scaler;
 
-import de.zebrajaeger.sphere2cube.Img;
-import de.zebrajaeger.sphere2cube.ReadableImage;
+import de.zebrajaeger.sphere2cube.image.Img;
+import de.zebrajaeger.sphere2cube.image.ReadableImage;
 import de.zebrajaeger.sphere2cube.multithreading.JobExecutor;
 
 import java.util.concurrent.ThreadPoolExecutor;

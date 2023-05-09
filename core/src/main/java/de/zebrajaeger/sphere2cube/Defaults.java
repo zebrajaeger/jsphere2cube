@@ -1,5 +1,7 @@
 package de.zebrajaeger.sphere2cube;
 
+import de.zebrajaeger.sphere2cube.image.Pixel;
+
 public class Defaults {
 
   public static final Pixel BACKGROUND_COLOR = new Pixel(0, 0, 0);

@@ -1,5 +1,8 @@
-package de.zebrajaeger.sphere2cube;
+package de.zebrajaeger.sphere2cube.util;
 
+import de.zebrajaeger.sphere2cube.image.Pixel;
+import de.zebrajaeger.sphere2cube.image.ReadableImage;
+import de.zebrajaeger.sphere2cube.image.WriteableImage;
 import net.jafama.FastMath;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

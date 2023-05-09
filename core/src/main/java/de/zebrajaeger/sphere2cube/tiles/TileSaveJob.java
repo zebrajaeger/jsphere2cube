@@ -1,8 +1,8 @@
 package de.zebrajaeger.sphere2cube.tiles;
 
-import de.zebrajaeger.sphere2cube.Img;
-import de.zebrajaeger.sphere2cube.ImgUtils;
-import de.zebrajaeger.sphere2cube.Pixel;
+import de.zebrajaeger.sphere2cube.image.Img;
+import de.zebrajaeger.sphere2cube.util.ImgUtils;
+import de.zebrajaeger.sphere2cube.image.Pixel;
 import de.zebrajaeger.sphere2cube.multithreading.Job;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
