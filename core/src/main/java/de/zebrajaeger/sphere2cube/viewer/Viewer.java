@@ -12,17 +12,22 @@ public abstract class Viewer {
     template = Mustache.compiler().escapeHTML(false).compile(getTemplate());
   }
 
-  public String render(ViewerConfig config) {
+  public String render(ViewerConfig config) throws RenderException {
     Map<String, Object> values = new ObjectMapper().map(config);
     values.put("css", config.getCssFiles().stream().map(EmbeddedFile::getEmbeddedUrl).toArray());
     values.put("js", config.getJsFiles().stream().map(EmbeddedFile::getEmbeddedUrl).toArray());
     modifyValues(config, values);
-    return template.execute(values);
+    try {
+      return template.execute(values);
+    } catch (Throwable t) {
+      throw new RenderException("Render Pannellum failed", t);
+    }
   }
 
   public abstract String getTemplate();
 
-  public void modifyValues(@SuppressWarnings("unused")ViewerConfig config, @SuppressWarnings("unused") Map<String, Object> values) {
+  public void modifyValues(@SuppressWarnings("unused") ViewerConfig config,
+      @SuppressWarnings("unused") Map<String, Object> values) {
   }
 
   public Object getIfExists(Map<String, Object> toSet, String key) {

@@ -32,6 +32,7 @@ import de.zebrajaeger.sphere2cube.viewer.MarzipanoTemplate;
 import de.zebrajaeger.sphere2cube.viewer.Pannellum;
 import de.zebrajaeger.sphere2cube.viewer.PannellumConfig;
 import de.zebrajaeger.sphere2cube.viewer.PannellumTemplate;
+import de.zebrajaeger.sphere2cube.viewer.RenderException;
 import de.zebrajaeger.sphere2cube.viewer.ViewerUtils;
 import de.zebrajaeger.sphere2cube.zip.Zipper;
 import java.io.File;
@@ -436,7 +437,7 @@ public class Sphere2CubeRenderer {
         });
       });
 
-      {
+      try {
         // pannellum target File
         File viewerPannellumFile = new File(outputFolder,
             config.getViewerConfig().getPannellum().getTarget());
@@ -449,9 +450,12 @@ public class Sphere2CubeRenderer {
         result.addStep(PanoProcessState.Step
             .of(PanoProcessState.StepType.VIEWER_PANNELLUM)
             .with(PanoProcessState.ValueType.FILE, viewerPannellumFile));
+      } catch (RenderException e) {
+        log.error("Failed to render Pannellum file", e);
       }
-      {
-        // panellum target template  File
+
+      try {
+        // pannellum target template  File
         File viewerPannellumTemplateFile = new File(outputFolder,
             config.getViewerConfig().getPannellum().getTemplateTarget());
         log.info("Render PannellumTemplate html: '{}'",
@@ -464,6 +468,8 @@ public class Sphere2CubeRenderer {
         result.addStep(PanoProcessState.Step
             .of(PanoProcessState.StepType.VIEWER_PANNELLUM)
             .with(PanoProcessState.ValueType.FILE, viewerPannellumTemplateFile));
+      } catch (RenderException e) {
+        log.error("Failed to render Pannellum template file", e);
       }
     }
 
@@ -485,7 +491,7 @@ public class Sphere2CubeRenderer {
         marzipanoConfig.getJsFiles().addAll(ViewerUtils.download(jsFiles, outputFolder));
       }
 
-      {
+      try {
         // target file
         File viewerMarzipanoFile = new File(outputFolder,
             config.getViewerConfig().getMarzipano().getTarget());
@@ -498,8 +504,11 @@ public class Sphere2CubeRenderer {
         result.addStep(PanoProcessState.Step
             .of(PanoProcessState.StepType.VIEWER_MARZIPANO)
             .with(PanoProcessState.ValueType.FILE, viewerMarzipanoFile));
+      } catch (RenderException e) {
+        log.error("Failed to render Marzipano file", e);
       }
-      {
+
+      try {
         // target template file
         File viewerMarzipanoTemplateFile = new File(outputFolder,
             config.getViewerConfig().getMarzipano().getTemplateTarget());
@@ -513,7 +522,10 @@ public class Sphere2CubeRenderer {
         result.addStep(PanoProcessState.Step
             .of(PanoProcessState.StepType.VIEWER_MARZIPANO)
             .with(PanoProcessState.ValueType.FILE, viewerMarzipanoTemplateFile));
+      } catch (RenderException e) {
+        log.error("Failed to render Marzipano template file", e);
       }
+
     }
 
     // Archive
