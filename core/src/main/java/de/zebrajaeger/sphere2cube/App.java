@@ -1,6 +1,8 @@
 package de.zebrajaeger.sphere2cube;
 
 import de.zebrajaeger.sphere2cube.config.Config;
+import de.zebrajaeger.sphere2cube.renderer.RenderException;
+import de.zebrajaeger.sphere2cube.renderer.Renderer;
 import de.zebrajaeger.sphere2cube.runconfig.PanoDirectory;
 import de.zebrajaeger.sphere2cube.runconfig.PanoSearcher;
 import de.zebrajaeger.sphere2cube.util.HashUtils;
@@ -9,19 +11,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.jline.utils.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class App {
 
-  private static final Logger LOG = LoggerFactory.getLogger(App.class);
-
   public static void main(String[] args)
-      throws IOException, InterruptedException, ParseException, ExecutionException {
+      throws IOException, ParseException, RenderException {
     System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
     Config config;
     File srcConfigFile = null;
@@ -63,7 +60,7 @@ public class App {
       FileUtils.forceMkdirParent(t);
       JsonUtils.saveJson(t, config);
     }
-    final Sphere2CubeRenderer renderer = new Sphere2CubeRenderer();
+    final Renderer renderer = new Renderer();
 
     PanoProcessState panoProcessState = renderer.renderPano(
         new File("."),
@@ -78,7 +75,7 @@ public class App {
    * everything in directory (recursive)
    */
   private static void renderAll(File root)
-      throws IOException, ExecutionException, InterruptedException {
+      throws IOException, RenderException {
     List<PanoDirectory> panoDirectories = PanoSearcher.scanRecursive(root);
     for (PanoDirectory p : panoDirectories) {
 
@@ -103,7 +100,7 @@ public class App {
       if (rerender) {
         Log.info("Rendering required....");
 
-        final Sphere2CubeRenderer renderer = new Sphere2CubeRenderer();
+        final Renderer renderer = new Renderer();
         renderer.renderPano(
             p.getRoot(),
             p.getConfig(),

@@ -1,7 +1,7 @@
 package de.zebrajaeger.sphere2cube;
 
 import de.zebrajaeger.sphere2cube.config.Config;
-import de.zebrajaeger.sphere2cube.panodescription.PanoDescription;
+import de.zebrajaeger.sphere2cube.renderer.Renderer;
 import de.zebrajaeger.sphere2cube.util.JsonUtils;
 import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
@@ -103,16 +103,7 @@ public class Sphere2CubeUi extends JFrame implements DropTargetListener {
       JsonUtils.saveJson(configFile, config);
     }
 
-    File descriptionFile = new File(panoImageFile.getParentFile(), name + ".description.json");
-    if (!descriptionFile.exists()) {
-      PanoDescription panoDescription = new PanoDescription();
-      String title = FileNameUtils.getBaseName(panoImageFile.getName());
-      panoDescription.setTitle(title);
-      panoDescription.setDescription(title);
-      JsonUtils.saveJson(descriptionFile, panoDescription);
-    }
-
-    final Sphere2CubeRenderer renderer = new Sphere2CubeRenderer();
+    final Renderer renderer = new Renderer();
 
     executorService.submit(() -> {
       try {
@@ -122,7 +113,7 @@ public class Sphere2CubeUi extends JFrame implements DropTargetListener {
             configFile,
             Defaults.BACKGROUND_COLOR);
         System.out.println(JsonUtils.toJson(panoProcessState));
-      } catch (IOException | InterruptedException | ExecutionException e) {
+      } catch (Throwable e) {
         e.printStackTrace();
       }
     });
