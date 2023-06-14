@@ -49,36 +49,7 @@
 <div id="panorama" class="panorma"></div>
 
 <script>
-  function checkIfSensorAvailable() {
-    return new Promise(resolve => {
-      try {
-        const sensor = new AbsoluteOrientationSensor();
-        if (sensor) {
-          sensor.onreading = () => {
-            console.log('onReading');
-            sensor.stop();
-            resolve(true);
-          }
-          sensor.onerror = (event) => {
-            if (event.error.name === 'NotReadableError') {
-              console.log("Sensor is not available.");
-            }
-            sensor.stop();
-            resolve(false);
-          }
-          sensor.start();
-        } else {
-          resolve(false);
-        }
-      } catch(err){
-        console.log(err);
-        resolve(false);
-      }
-    })
-  }
-
   (async () => {
-    const av = await checkIfSensorAvailable();
     const cfg = {
       "type": "multires",
       "multiRes": {
@@ -86,23 +57,24 @@
         "path": "/%l/%s%x_%y",
         "extension": "{{tileFileType}}",
         "tileResolution": {{tileSize}},
-    "maxLevel": {{levelCount}},
-    "cubeResolution": {{targetImageSize}},
-  },
-    "preview": "{{description.preview.path}}",
-        "autoLoad": {{autoLoad}},
-    "minYaw": {{xMin}},
-    "maxYaw": {{xMax}},
-    "minPitch": {{yMin}},
-    "maxPitch": {{yMax}},
-  }
-    cfg['orientationOnByDefault'] = av;
-    if (!av) {
+        "maxLevel": {{levelCount}},
+        "cubeResolution": {{targetImageSize}},
+      },
+      "preview": "{{description.preview.path}}",
+      "autoLoad": {{autoLoad}},
+      "minYaw": {{xMin}},
+      "maxYaw": {{xMax}},
+      "minPitch": {{yMin}},
+      "maxPitch": {{yMax}},
+    }
+    if (window.DeviceOrientationEvent) {
+      if(console) console.log('Auto Orientation supported');
+      cfg['orientationOnByDefault'] = true;
+    } else {
+      if(console) console.log('Auto Orientation NOT supported');
       cfg['autoRotate'] = 2;
     }
-    if(console){
-      console.log(cfg);
-    }
+    if(console) console.log(cfg);
     pannellum.viewer('panorama', cfg);
   })();
 </script>
