@@ -119,6 +119,8 @@ Example (at least change source.path for input file, everything else may be ok):
 - [X] restrict view angle dependent from source image bounds
 - [X] Add css and js from viewers instead link to CDN
 - [X] zip file packing (multithreaded)
+- [X] simple drop-target UI
+- [ ] Add configuration options to UI
 
 ### MID (nice to have)
 - [ ] ~~maven plugin~~ that doesn't make too much sense
