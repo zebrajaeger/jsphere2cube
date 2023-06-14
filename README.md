@@ -105,25 +105,27 @@ Example (at least change source.path for input file, everything else may be ok):
 
 - <https://stackoverflow.com/questions/29678510/convert-21-equirectangular-panorama-to-cube-map/29681646#29681646>
 - <https://github.com/jaxry/panorama-to-cubemap/blob/gh-pages/convert.js>
+- <https://developers.google.com/streetview/spherical-metadata>
+- <https://download.kolor.com/apg/stable/history>
 
 ## TODO
 
 ### HIGH (required)
 - [X] More differentiated logging 
-- [X] Progress bar~~
-- [X] Timer~~
-- [X] Marzipano viewer~~  
-- [X] read embedded xml of autopano giga~~
-- [X] restrict view angle dependent from source image bounds~~
-- [X] Add css and js from viewers instead link to CDN~~
-- [X] zip file packing (multithreaded)~~
+- [X] Progress bar
+- [X] Timer
+- [X] Marzipano viewer  
+- [X] read embedded xml of Autopano Giga
+- [X] restrict view angle dependent from source image bounds
+- [X] Add css and js from viewers instead link to CDN
+- [X] zip file packing (multithreaded)
 
 ### MID (nice to have)
-- [ ] maven plugin
+- [ ] ~~maven plugin~~ that doesn't make too much sense
 - [X] self containing application
-- [ ] Populate README
+- [X] Populate README
 - [X] Panorama description file
 
 ### LOW (later or never...)
-- [ ] output image in tiles / dump to HDD
-- [ ] input image in tiles / dump to HDD
+- [ ] output image paging for images that are too big to fit in memory 
+- [ ] input image paging for images that are too big to fit in memory
