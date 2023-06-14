@@ -44,10 +44,10 @@
       "enabled": true,
       "target": "index.p.html",
       "js": [
-        "https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"
+        "https://github.com/zebrajaeger/pannellum-modified/releases/download/v2.5.6m/pannellum.js"
       ],
       "css": [
-        "https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"
+        "https://github.com/zebrajaeger/pannellum-modified/releases/download/v2.5.6m/pannellum.css"
       ]
     },
     "marzipano": {
